@@ -22,8 +22,8 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            overflow: hidden; /* Strict viewport layout enforcement */
-            padding-bottom: 10px;
+            overflow: hidden; /* Enforces strict app-like layout boundaries */
+            padding-bottom: 5px;
         }
 
         /* 1. TOP HEADER LINK */
@@ -52,7 +52,7 @@
             color: #00e5ff;
         }
 
-        /* 2. BRANDING WITH TAGLINE SNIPPET */
+        /* 2. BRANDING HEADLINE GROUP */
         .brand-container {
             text-align: center;
             margin-top: 5px;
@@ -80,24 +80,24 @@
             font-weight: 700;
         }
 
-        /* 3. CONSOLE INTERACTIVE CARD INTERFACE */
+        /* 3. CONSOLE CARD CONTAINER (ULTRA-BALANCED COMPACT GRID) */
         .setup-card {
             width: 90%;
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 14px 16px; /* Reduced top padding to kill the dead space */
+            padding: 12px 16px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Aligns content to top of card */
+            justify-content: flex-start;
             flex-grow: 1;
-            max-height: 60vh; /* Limits card over-expansion */
+            max-height: 72vh; /* Expanded down gracefully to fit footer matrix internally */
             margin: 5px 0;
         }
 
-        /* VIDEO SYSTEM PREVIEW */
+        /* VIDEO SYSTEM PREVIEW MODULE */
         .camera-preview-box {
             width: 100%;
             height: 105px;
@@ -140,7 +140,7 @@
             color: #00e5ff;
         }
 
-        /* INTEGRATED AUDIO VISUALIZER ELEMENT */
+        /* INTEGRATED DETAILED AUDIO VISUALIZER SPECTRUM */
         .visualizer-area {
             display: flex;
             flex-direction: column;
@@ -189,6 +189,7 @@
             border-color: #00e5ff;
         }
 
+        /* SELECTION DROPDOWN BLOCKS */
         .input-group {
             margin-bottom: 10px;
         }
@@ -217,6 +218,7 @@
             -webkit-appearance: none;
         }
 
+        /* OPTIMIZED ACTION BUTTON ROW WITH BALANCED MARGINS */
         .jam-btn {
             width: 100%;
             background: #000000;
@@ -229,9 +231,10 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            margin-top: auto; /* Pushes the button perfectly to the bottom of the card context */
+            margin-bottom: 12px; /* Leaves a precise space below for internal networks */
             transition: all 0.2s ease;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
+            flex-shrink: 0;
         }
 
         .jam-btn:active {
@@ -241,17 +244,15 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* 4. VISIBLE FOOTER LINKS ROW */
+        /* 4. INTEGRATED INTERNAL FOOTER (NEON BLUE HOUSINGS IN VIEW NOW) */
         .footer-network {
             width: 100%;
-            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
             border-top: 1px solid #111111;
-            padding-top: 8px;
-            margin-bottom: 8px;
+            padding-top: 10px;
             flex-shrink: 0;
         }
 
@@ -264,7 +265,7 @@
 
         .hex-anchor {
             position: relative;
-            width: 34px; /* Scaled down slightly to fit the layout bounds comfortably */
+            width: 34px; 
             height: 19.63px;
             background-color: transparent;
             border-left: 2px solid #00e5ff;
@@ -308,12 +309,17 @@
             line-height: 1;
         }
 
+        /* ULTRA SLEEK LATENCY BASELINE FOOTER */
         .latency-footer {
             font-size: 8px;
             color: #222222;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
+            margin-top: 2px;
+            text-align: center;
+            width: 100%;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -372,26 +378,27 @@
         </div>
 
         <button class="jam-btn" onclick="enterJam()">Jam Now</button>
+
+        <div class="footer-network">
+            <div class="social-row">
+                <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
+                    <i class="fa-brands fa-instagram hex-inner-symbol"></i>
+                </a>
+                <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
+                    <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
+                </a>
+                <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
+                    <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
+                </a>
+                <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
+                    <i class="fa-regular fa-envelope hex-inner-symbol"></i>
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="footer-network">
-        <div class="social-row">
-            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-instagram hex-inner-symbol"></i>
-            </a>
-            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
-            </a>
-            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
-            </a>
-            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
-                <i class="fa-regular fa-envelope hex-inner-symbol"></i>
-            </a>
-        </div>
-        <div class="latency-footer">
-            Server Status: Operational (0ms)
-        </div>
+    <div class="latency-footer">
+        Server Status: Operational (0ms)
     </div>
 
     <script>
@@ -403,12 +410,14 @@
         let animationFrameId = null;
         let barElements = [];
 
+        // Isolated Audio Track Permissions Engine Request
         async function toggleMicFeed() {
             const micBtn = document.getElementById('micBtn');
             barElements = document.querySelectorAll('.eq-bar');
 
             if (!audioStream) {
                 try {
+                    // Explicit Audio track request triggers here independently
                     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
@@ -421,7 +430,7 @@
                     micBtn.classList.add('active');
                     updateVisualizer();
                 } catch (err) {
-                    alert("Input permission was denied.");
+                    alert("Input microphone permission was denied.");
                 }
             } else {
                 audioStream.getTracks().forEach(track => track.stop());
@@ -446,19 +455,21 @@
             }
         }
 
+        // Isolated Video Track Permissions Engine Request
         async function toggleCam() {
             const btn = document.getElementById('camBtn');
             const video = document.getElementById('webcam');
 
             if (!videoStream) {
                 try {
+                    // Explicit Camera layer request triggers here independently
                     videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
                     video.srcObject = videoStream;
                     video.style.display = 'block';
                     btn.innerText = "Video On";
                     btn.classList.add('active');
                 } catch (err) {
-                    alert("Unable to access camera.");
+                    alert("Camera capture permission was denied.");
                 }
             } else {
                 videoStream.getTracks().forEach(track => track.stop());
@@ -468,6 +479,8 @@
                 btn.classList.remove('active');
             }
         }
+
+        document.cookie = "Cross-Site-Cookie=MeldNetworkNode; SameSite=None; Secure";
 
         function enterJam() {
             const inst = document.getElementById('instrument').value;
