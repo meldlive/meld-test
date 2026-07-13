@@ -48,7 +48,7 @@
             font-weight: 700;
         }
 
-        /* 2. ENLARGED EQUALIZER VISUALIZER */
+        /* 2. LIVE EQUALIZER VISUALIZER */
         .visualizer-container {
             width: 100%;
             max-width: 360px;
@@ -56,38 +56,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 6px;
             margin: 20px 0;
         }
 
         .eq-bar {
             width: 7px;
-            height: 15px;
+            height: 4px; /* Starts completely flat */
             background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
             border-radius: 4px;
             box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
-            animation: bounce 0.8s ease-in-out infinite alternate;
+            transition: height 0.05s ease; /* Fast response for realism */
         }
 
-        .eq-1  { height: 40px; animation-delay: 0.1s; }
-        .eq-2  { height: 65px; animation-delay: 0.4s; }
-        .eq-3  { height: 25px; animation-delay: 0.2s; }
-        .eq-4  { height: 80px; animation-delay: 0.6s; }
-        .eq-5  { height: 45px; animation-delay: 0.3s; }
-        .eq-6  { height: 90px; animation-delay: 0.5s; }
-        .eq-7  { height: 35px; animation-delay: 0.1s; }
-        .eq-8  { height: 60px; animation-delay: 0.7s; }
-        .eq-9  { height: 30px; animation-delay: 0.2s; }
-
-        @keyframes bounce {
-            0% { transform: scaleY(0.25); opacity: 0.5; }
-            100% { transform: scaleY(1.15); opacity: 1; }
-        }
-
-        /* 3. FULL-SCREEN EXPANDED CONFIGURATION CARD */
+        /* 3. CONFIGURATION CARD */
         .setup-card {
             width: 100%;
-            max-width: 440px; /* Expanded capacity width */
+            max-width: 440px;
             background: #070707;
             border: 1px solid #121212;
             padding: 28px 24px;
@@ -100,10 +85,9 @@
             margin-bottom: 20px;
         }
 
-        /* ENLARGED CAMERA PREVIEW BOX */
         .camera-preview-box {
             width: 100%;
-            height: 160px; /* Increased visual area */
+            height: 160px;
             background-color: #0c0c0c;
             border: 1px dashed #222222;
             border-radius: 16px;
@@ -146,7 +130,6 @@
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
         }
 
-        /* STRETCHED SELECT DRAG FIELDS */
         .input-group {
             margin-bottom: 24px;
         }
@@ -166,7 +149,7 @@
             background: #0d0d0d;
             border: 1px solid #1a1a1a;
             color: #ffffff;
-            padding: 18px 16px; /* Ultra comfortable tap size */
+            padding: 18px 16px;
             border-radius: 14px;
             font-size: 15px;
             font-weight: 600;
@@ -174,21 +157,18 @@
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
-            transition: all 0.2s;
         }
 
         .input-group select:focus {
             border-color: #00e5ff;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
         }
 
-        /* MASSIVE ACTION TRIGGER BUTTON */
         .jam-btn {
             width: 100%;
             background: #ffffff;
             color: #000000;
             border: none;
-            padding: 20px; /* Big click vector */
+            padding: 20px;
             border-radius: 35px;
             font-size: 15px;
             font-weight: 900;
@@ -196,14 +176,12 @@
             letter-spacing: 3px;
             cursor: pointer;
             margin-top: 10px;
-            transition: transform 0.1s, box-shadow 0.2s, background-color 0.2s;
             box-shadow: 0 6px 25px rgba(255, 255, 255, 0.15);
         }
 
         .jam-btn:active {
             transform: scale(0.97);
             background: #00e5ff;
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.7);
         }
 
         .latency-footer {
@@ -223,16 +201,16 @@
         <div class="tagline">High-Fidelity Collaboration Portal</div>
     </div>
 
-    <div class="visualizer-container">
-        <div class="eq-bar eq-1"></div>
-        <div class="eq-bar eq-2"></div>
-        <div class="eq-bar eq-3"></div>
-        <div class="eq-bar eq-4"></div>
-        <div class="eq-bar eq-5"></div>
-        <div class="eq-bar eq-6"></div>
-        <div class="eq-bar eq-7"></div>
-        <div class="eq-bar eq-8"></div>
-        <div class="eq-bar eq-9"></div>
+    <div class="visualizer-container" id="eqContainer">
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
     </div>
 
     <div class="setup-card">
@@ -261,7 +239,6 @@
                 <optgroup label="Percussion">
                     <option value="Electronic Drums">🥁 Electronic Drums</option>
                     <option value="Acoustic Drums">🥁 Acoustic Drums</option>
-                    <option value="Percussion Pad">🎵 Percussion / Sample Pad</option>
                 </optgroup>
             </select>
         </div>
@@ -278,13 +255,10 @@
                     <option value="Vocalist">🎤 Vocalist / Singer</option>
                 </optgroup>
                 <optgroup label="Keys Needed">
-                    <option value="Keyboardist">🎹 Keyboardist / Synth Player</option>
+                    <option value="Keyboardist">🎹 Keyboardist</option>
                 </optgroup>
                 <optgroup label="Percussion Needed">
                     <option value="Drummer">🥁 Drummer / Beatmaker</option>
-                </optgroup>
-                <optgroup label="Production">
-                    <option value="Audio Engineer">🎚️ Producer / Mixing Engineer</option>
                 </optgroup>
             </select>
         </div>
@@ -298,6 +272,53 @@
 
     <script>
         let videoStream = null;
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+        const barElements = document.querySelectorAll('.eq-bar');
+
+        // Automatically request Mic access to activate Equalizer on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initAudioVisualizer();
+        });
+
+        async function initAudioVisualizer() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 32; // Low bin size for 9 tracking bars
+                
+                source.connect(analyser);
+                
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                updateVisualizer();
+            } catch (err) {
+                console.log("Audio visualizer mic access declined or restricted.");
+            }
+        }
+
+        function updateVisualizer() {
+            if (!analyser) return;
+            requestAnimationFrame(updateVisualizer);
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            // Map the frequency data directly to our 9 bars
+            for (let i = 0; i < barElements.length; i++) {
+                // Read frequency data, scale it down cleanly to fit the 90px max container height
+                let value = dataArray[i] || 0;
+                let percentHeight = (value / 255) * 85; 
+                
+                // Keep a minimal base value of 4px so it never completely disappears
+                barElements[i].style.height = `${Math.max(4, percentHeight)}px`;
+            }
+        }
 
         async function toggleCam() {
             const btn = document.getElementById('camBtn');
@@ -325,7 +346,7 @@
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
-            alert(`Searching for an optimized room matching a ${inst} with a ${target}...`);
+            alert(`Searching for rooms pairing a ${inst} with a ${target}...`);
         }
     </script>
 </body>
