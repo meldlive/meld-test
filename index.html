@@ -24,14 +24,14 @@
             overflow-x: hidden;
         }
 
-        /* 1. UMBRELLA COMPANY STATIC NETWORK BAR */
+        /* 1. PARENT MELD ENGINE ASSIGNMENT LAYER */
         .umbrella-bar {
             width: 100%;
             background-color: #050505;
             border-bottom: 1px solid #111111;
             padding: 12px 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
 
@@ -40,14 +40,6 @@
             font-weight: 800;
             letter-spacing: 3px;
             color: #666666;
-            text-transform: uppercase;
-        }
-
-        .umbrella-node {
-            font-size: 10px;
-            color: #00e5ff;
-            font-weight: 700;
-            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
@@ -63,6 +55,7 @@
             font-weight: 900;
             letter-spacing: 6px;
             color: #ffffff;
+            text-transform: uppercase; /* Ensures ALL CAPS */
         }
 
         .tagline {
@@ -74,28 +67,28 @@
             font-weight: 700;
         }
 
-        /* 3. DYNAMIC EQUALIZER AREA */
+        /* 3. FULL SCREEN EQUALIZER VISUALIZER VISUALIZER AREA */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
             margin: 15px 0;
-            width: 100%;
+            width: 100%; /* Full screen span container */
         }
 
         .visualizer-container {
-            width: 100%;
-            max-width: 360px;
+            width: 100%; /* Spans full body width */
             height: 90px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
+            justify-content: space-around; /* Spread bars across full screen */
+            padding: 0 10px; /* Minimal padding at edges */
         }
 
         .eq-bar {
-            width: 7px;
+            flex-grow: 1; /* Bars stretch to fill space */
+            max-width: 10px; /* Limits individual bar width slightly */
             height: 4px; /* Default flat state until triggered */
             background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
             border-radius: 4px;
@@ -126,7 +119,7 @@
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
         }
 
-        /* 4. FULL-SCREEN EXPANDED CONFIGURATION CARD */
+        /* 4. CONFIGURATION CARD */
         .setup-card {
             width: 100%;
             max-width: 440px;
@@ -135,7 +128,6 @@
             padding: 28px 24px;
             border-radius: 28px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.95);
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -241,14 +233,14 @@
             background: #00e5ff;
         }
 
-        /* 5. MULTI-LINK CORE SOCIAL NAVIGATION NAVIGATION BAR */
+        /* 5. MULTI-ICON SOCIAL NAVIGATION FOOTER */
         .footer-network {
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
             margin-bottom: 15px;
             border-top: 1px solid #111111;
             padding-top: 20px;
@@ -262,33 +254,33 @@
             flex-wrap: wrap;
         }
 
-        .social-link {
+        .social-icon-link {
+            text-decoration: none;
             color: #888888;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: color 0.2s;
+            transition: color 0.2s, transform 0.1s;
         }
 
-        .social-link:hover, .social-link:active {
+        .social-icon-link:hover, .social-icon-link:active {
             color: #00e5ff;
-        }
-
-        .mail-anchor {
-            font-size: 20px;
-            color: #ffffff;
-            text-decoration: none;
-            opacity: 0.6;
-            margin-top: 4px;
-            transition: opacity 0.2s, transform 0.2s;
-        }
-
-        .mail-anchor:active {
-            opacity: 1;
             transform: scale(1.1);
         }
+
+        /* CSS Icon Placeholders */
+        .icon {
+            font-size: 20px;
+            font-weight: 900;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Using simple text placeholders; replace with SVG or image assets later */
+        .icon-instagram::before { content: 'I'; }
+        .icon-tiktok::before { content: 'T'; }
+        .icon-website::before { content: 'W'; }
+        .icon-email::before { content: '✉️'; }
 
         .latency-footer {
             font-size: 9px;
@@ -304,16 +296,27 @@
 
     <div class="umbrella-bar">
         <div class="umbrella-brand">MELD Umbrella System</div>
-        <div class="umbrella-node">Isolated Node-01</div>
-    </div>
+        </div>
 
     <div class="brand-container">
-        <div class="logo">MyRoc</div>
-        <div class="tagline">Direct Line Collaboration Portal</div>
+        <div class="logo">MYROC</div>
+        <div class="tagline">High-Fidelity Audio Collaboration Engine</div>
     </div>
 
     <div class="visualizer-area">
-        <div class="visualizer-container">
+        <div class="visualizer-container" id="eqContainer">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
@@ -361,11 +364,19 @@
 
     <div class="footer-network">
         <div class="social-row">
-            <a href="https://instagram.com" class="social-link" target="_blank">Instagram</a>
-            <a href="https://tiktok.com" class="social-link" target="_blank">TikTok</a>
-            <a href="https://meldliveapp.com" class="social-link" target="_blank">Meld Website</a>
+            <a href="https://instagram.com/meldliveapp" class="social-icon-link" target="_blank">
+                <div class="icon icon-instagram"></div>
+            </a>
+            <a href="https://tiktok.com/@meldlive" class="social-icon-link" target="_blank">
+                <div class="icon icon-tiktok"></div>
+            </a>
+            <a href="https://meldliveapp.com" class="social-icon-link" target="_blank">
+                <div class="icon icon-website"></div>
+            </a>
+            <a href="mailto:meldliveapp@gmail.com" class="social-icon-link">
+                <div class="icon icon-email"></div>
+            </a>
         </div>
-        <a href="mailto:meldliveapp@gmail.com" class="mail-anchor">✉️</a>
         <div class="latency-footer">
             Server Status: Operational (0ms)
         </div>
@@ -389,7 +400,7 @@
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
                     analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 32;
+                    analyser.fftSize = 64; // Bin size for spread visualization
                     source.connect(analyser);
                     const bufferLength = analyser.frequencyBinCount;
                     dataArray = new Uint8Array(bufferLength);
@@ -413,8 +424,13 @@
             if (!analyser) return;
             animationFrameId = requestAnimationFrame(updateVisualizer);
             analyser.getByteFrequencyData(dataArray);
+            
+            // Map the frequency bins across our expanded bar set
             for (let i = 0; i < barElements.length; i++) {
-                let value = dataArray[i] || 0;
+                // Read frequency data from a corresponding bin, scale it cleanly
+                // We space the visual data reading across the frequency spectrum
+                let binIndex = Math.floor(i * (dataArray.length / barElements.length));
+                let value = dataArray[binIndex] || 0;
                 let percentHeight = (value / 255) * 85; 
                 barElements[i].style.height = `${Math.max(4, percentHeight)}px`;
             }
@@ -448,7 +464,7 @@
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
-            alert(`Searching isolated MyRoc servers pairing your ${inst} with a ${target}...`);
+            alert(`Searching MyRoc servers pairing your ${inst} with a ${target}...`);
         }
     </script>
 </body>
