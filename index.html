@@ -48,7 +48,16 @@
             font-weight: 700;
         }
 
-        /* 2. LIVE EQUALIZER VISUALIZER */
+        /* 2. DYNAMIC EQUALIZER AREA */
+        .visualizer-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            width: 100%;
+        }
+
         .visualizer-container {
             width: 100%;
             max-width: 360px;
@@ -57,16 +66,35 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            margin: 20px 0;
         }
 
         .eq-bar {
             width: 7px;
-            height: 4px; /* Starts completely flat */
+            height: 4px; /* Default flat state */
             background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
             border-radius: 4px;
             box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
-            transition: height 0.05s ease; /* Fast response for realism */
+            transition: height 0.05s ease;
+        }
+
+        .mic-toggle-link {
+            font-size: 11px;
+            color: #00e5ff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .mic-toggle-link.active {
+            color: #555555;
+            pointer-events: none; /* Disables clicking once active */
         }
 
         /* 3. CONFIGURATION CARD */
@@ -159,10 +187,6 @@
             -webkit-appearance: none;
         }
 
-        .input-group select:focus {
-            border-color: #00e5ff;
-        }
-
         .jam-btn {
             width: 100%;
             background: #ffffff;
@@ -177,11 +201,6 @@
             cursor: pointer;
             margin-top: 10px;
             box-shadow: 0 6px 25px rgba(255, 255, 255, 0.15);
-        }
-
-        .jam-btn:active {
-            transform: scale(0.97);
-            background: #00e5ff;
         }
 
         .latency-footer {
@@ -201,16 +220,19 @@
         <div class="tagline">High-Fidelity Collaboration Portal</div>
     </div>
 
-    <div class="visualizer-container" id="eqContainer">
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
+    <div class="visualizer-area">
+        <div class="visualizer-container">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+        </div>
+        <button class="mic-toggle-link" id="micBtn" onclick="initAudioVisualizer()">Test Instrument Input</button>
     </div>
 
     <div class="setup-card">
@@ -277,29 +299,29 @@
         let dataArray = null;
         const barElements = document.querySelectorAll('.eq-bar');
 
-        // Automatically request Mic access to activate Equalizer on load
-        window.addEventListener('DOMContentLoaded', () => {
-            initAudioVisualizer();
-        });
-
         async function initAudioVisualizer() {
+            const micBtn = document.getElementById('micBtn');
             try {
+                // permission requested ONLY when they click this button now
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioContext.createMediaStreamSource(stream);
                 
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 32; // Low bin size for 9 tracking bars
+                analyser.fftSize = 32;
                 
                 source.connect(analyser);
                 
                 const bufferLength = analyser.frequencyBinCount;
                 dataArray = new Uint8Array(bufferLength);
                 
+                micBtn.innerText = "Signal Active";
+                micBtn.classList.add('active');
+                
                 updateVisualizer();
             } catch (err) {
-                console.log("Audio visualizer mic access declined or restricted.");
+                alert("Microphone permission was denied.");
             }
         }
 
@@ -309,13 +331,9 @@
             
             analyser.getByteFrequencyData(dataArray);
             
-            // Map the frequency data directly to our 9 bars
             for (let i = 0; i < barElements.length; i++) {
-                // Read frequency data, scale it down cleanly to fit the 90px max container height
                 let value = dataArray[i] || 0;
                 let percentHeight = (value / 255) * 85; 
-                
-                // Keep a minimal base value of 4px so it never completely disappears
                 barElements[i].style.height = `${Math.max(4, percentHeight)}px`;
             }
         }
