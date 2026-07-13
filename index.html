@@ -22,7 +22,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            overflow: hidden; /* Enforces strict app-like layout boundaries */
+            overflow: hidden; /* Enforces strict app viewport limits */
             padding-bottom: 5px;
         }
 
@@ -80,31 +80,31 @@
             font-weight: 700;
         }
 
-        /* 3. CONSOLE CARD CONTAINER (ULTRA-BALANCED COMPACT GRID) */
+        /* 3. CONSOLE CARD CONTAINER (EXPANDED TO VERTICALLY FILLReal estate) */
         .setup-card {
             width: 90%;
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 12px 16px;
+            padding: 16px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-between; /* Stretches interior layout out fully */
             flex-grow: 1;
-            max-height: 72vh; /* Expanded down gracefully to fit footer matrix internally */
-            margin: 5px 0;
+            max-height: 76vh; /* Allowed more space to maximize presentation size */
+            margin: 8px 0;
         }
 
         /* VIDEO SYSTEM PREVIEW MODULE */
         .camera-preview-box {
             width: 100%;
-            height: 105px;
+            height: 125px; /* Stretched up to fill empty layout space */
             background-color: #0a0a0a;
             border: 1px dashed #222222;
             border-radius: 14px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -140,13 +140,13 @@
             color: #00e5ff;
         }
 
-        /* INTEGRATED DETAILED AUDIO VISUALIZER SPECTRUM */
+        /* AUDIO VISUALIZER MODULE */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             width: 100%;
             flex-shrink: 0;
         }
@@ -189,9 +189,13 @@
             border-color: #00e5ff;
         }
 
-        /* SELECTION DROPDOWN BLOCKS */
+        /* DROPDOWN CONFIGURATIONS */
         .input-group {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            flex-grow: 1; /* Allows selectors to claim comfortable breathing room vertically */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .input-group label {
@@ -209,7 +213,7 @@
             background: #0a0a0a;
             border: 1px solid #161616;
             color: #ffffff;
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -218,20 +222,20 @@
             -webkit-appearance: none;
         }
 
-        /* OPTIMIZED ACTION BUTTON ROW WITH BALANCED MARGINS */
+        /* BLUE BRAND ACTION TRIGGER BUTTON */
         .jam-btn {
             width: 100%;
             background: #000000;
             color: #00e5ff;
             border: 2px solid #00e5ff;
-            padding: 12px;
+            padding: 14px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            margin-bottom: 12px; /* Leaves a precise space below for internal networks */
+            margin-bottom: 6px;
             transition: all 0.2s ease;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
             flex-shrink: 0;
@@ -244,15 +248,15 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* 4. INTEGRATED INTERNAL FOOTER (NEON BLUE HOUSINGS IN VIEW NOW) */
+        /* INTERNAL FOOTER SECTION WITH NEW SEPARATING VISUAL DIVIDER */
         .footer-network {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            border-top: 1px solid #111111;
-            padding-top: 10px;
+            border-top: 1px solid #1a1a1a; /* Clean visual separator layout line */
+            padding-top: 8px;
             flex-shrink: 0;
         }
 
@@ -270,7 +274,7 @@
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
-            margin: 9.81px 0;
+            margin: 8px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -309,7 +313,7 @@
             line-height: 1;
         }
 
-        /* ULTRA SLEEK LATENCY BASELINE FOOTER */
+        /* STATUS BASELINE FOOTER */
         .latency-footer {
             font-size: 8px;
             color: #222222;
@@ -410,14 +414,13 @@
         let animationFrameId = null;
         let barElements = [];
 
-        // Isolated Audio Track Permissions Engine Request
+        // Isolated Audio track dynamic engine request
         async function toggleMicFeed() {
             const micBtn = document.getElementById('micBtn');
             barElements = document.querySelectorAll('.eq-bar');
 
             if (!audioStream) {
                 try {
-                    // Explicit Audio track request triggers here independently
                     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
@@ -455,14 +458,13 @@
             }
         }
 
-        // Isolated Video Track Permissions Engine Request
+        // Isolated Video track dynamic engine request
         async function toggleCam() {
             const btn = document.getElementById('camBtn');
             const video = document.getElementById('webcam');
 
             if (!videoStream) {
                 try {
-                    // Explicit Camera layer request triggers here independently
                     videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
                     video.srcObject = videoStream;
                     video.style.display = 'block';
@@ -479,8 +481,6 @@
                 btn.classList.remove('active');
             }
         }
-
-        document.cookie = "Cross-Site-Cookie=MeldNetworkNode; SameSite=None; Secure";
 
         function enterJam() {
             const inst = document.getElementById('instrument').value;
