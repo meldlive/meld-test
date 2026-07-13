@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MyRoc | Powered by MELD</title>
+    <title>MYROC | Powered by MELD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -17,13 +17,14 @@
         body {
             background-color: #000000;
             color: #ffffff;
-            height: 100vh; /* Enforces absolute fixed screen heights */
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Spreads components out naturally to fill the height */
+            justify-content: flex-start;
             align-items: center;
-            overflow: hidden; /* Hard cut to kill any scrolling */
-            padding-bottom: 5px;
+            overflow: hidden; /* Prevent any layout shifting or scrolling */
+            padding-bottom: 60px; /* Precise headroom cushion for the absolute footer */
+            position: relative;
         }
 
         /* 1. TOP HEADER LINK */
@@ -31,7 +32,7 @@
             width: 100%;
             background-color: #050505;
             border-bottom: 1px solid #111111;
-            padding: 10px 20px;
+            padding: 8px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -52,56 +53,58 @@
             color: #00e5ff;
         }
 
-        /* 2. PREMIUM TYPOGRAPHY BRANDING */
+        /* 2. BRANDING HEADLINE GROUP */
         .brand-container {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 12px;
             width: 100%;
             flex-shrink: 0;
         }
 
         .logo {
-            font-size: 38px;
+            font-size: 34px;
             font-weight: 900;
-            letter-spacing: 8px; /* High-end horizontal tracking */
+            letter-spacing: 8px;
             background: linear-gradient(180deg, #ffffff 0%, #888888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
+            line-height: 1.1;
         }
 
         .tagline {
-            font-size: 10px;
+            font-size: 9px;
             color: #444444;
             text-transform: uppercase;
-            letter-spacing: 2.5px;
+            letter-spacing: 2px;
             margin-top: 4px;
             font-weight: 700;
         }
 
-        /* 3. CONSOLE DASHBOARD CARD (EXPANDED & TIGHTENED) */
+        /* 3. PERFECT CONSOLE CARD FRAME FROM YOUR TARGET SCREENSHOT */
         .setup-card {
             width: 90%;
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 20px; /* Reduced breathing room to tighten layout */
-            border-radius: 28px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.95);
-            flex-grow: 1; /* Card stretches out to fill the gap */
+            padding: 18px 16px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            margin-bottom: 25px;
+            justify-content: flex-start;
+            margin-top: 20px;
+            flex-shrink: 0;
         }
 
+        /* VIDEO PREVIEW BOX */
         .camera-preview-box {
             width: 100%;
-            height: 130px; /* Shaved vertical dimension */
+            height: 125px; 
             background-color: #0a0a0a;
             border: 1px dashed #222222;
-            border-radius: 16px;
-            margin-bottom: 20px;
+            border-radius: 14px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -121,9 +124,9 @@
             background: #111111;
             border: 1px solid #222222;
             color: #888888;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -137,24 +140,23 @@
             color: #00e5ff;
         }
 
-        /* 4. TIGHTENED FULL SCREEN EQUALIZER VISUALIZER */
+        /* AUDIO VISUALIZER ENGINE */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            margin: 15px 0;
+            gap: 4px;
+            margin-bottom: 12px;
             width: 100%;
             flex-shrink: 0;
         }
 
         .visualizer-container {
             width: 100%;
-            height: 50px; /* Shaved vertical stack height */
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 4px;
         }
 
         .eq-bar {
@@ -168,7 +170,7 @@
         }
 
         .mic-toggle-link {
-            font-size: 10px;
+            font-size: 9px;
             color: #00e5ff;
             text-decoration: none;
             text-transform: uppercase;
@@ -177,7 +179,7 @@
             background: none;
             border: 1px solid rgba(0, 229, 255, 0.3);
             cursor: pointer;
-            padding: 6px 14px;
+            padding: 4px 10px;
             border-radius: 20px;
             transition: all 0.2s;
         }
@@ -187,19 +189,19 @@
             border-color: #00e5ff;
         }
 
-        /* INPUT GROUPS */
+        /* DROPDOWN CONFIGURATIONS */
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             flex-shrink: 0;
         }
 
         .input-group label {
             display: block;
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: #555555;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 700;
         }
 
@@ -208,7 +210,7 @@
             background: #0a0a0a;
             border: 1px solid #161616;
             color: #ffffff;
-            padding: 14px;
+            padding: 12px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -217,33 +219,43 @@
             -webkit-appearance: none;
         }
 
+        /* GLOWING ACTION JAM BUTTON */
         .jam-btn {
             width: 100%;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            padding: 18px;
+            background: #000000;
+            color: #00e5ff;
+            border: 2px solid #00e5ff;
+            padding: 14px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
             flex-shrink: 0;
         }
 
-        /* 5. MATCHING NEON BLUE HEXAGON FOOTER DOCK (PULLED INTO VIEW BOUNDS NATIVELY) */
+        .jam-btn:active {
+            transform: scale(0.98);
+            background: #00e5ff;
+            color: #000000;
+            box-shadow: 0 0 25px #00e5ff;
+        }
+
+        /* 4. ABSOLUTE DOCKED FOOTER CONTAINER - LOCKED PERMANENTLY TO THE BOTTOM */
         .footer-network {
+            position: absolute;
+            bottom: 15px; /* Safely floating right above browser navigation bars */
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
-            border-top: 1px solid #111111;
-            padding-top: 20px;
-            margin-bottom: 10px;
+            gap: 4px;
             flex-shrink: 0;
         }
 
@@ -252,17 +264,16 @@
             justify-content: center;
             align-items: center;
             gap: 16px;
-            flex-wrap: wrap;
         }
 
         .hex-anchor {
             position: relative;
-            width: 44px; /* Scaled hexagons down slightly to fit tight bounds */
-            height: 25.4px;
+            width: 34px; 
+            height: 19.63px;
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
-            margin: 12.7px 0;
+            margin: 8px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -274,44 +285,42 @@
         .hex-anchor::before, .hex-anchor::after {
             content: "";
             position: absolute;
-            width: 31.11px;
-            height: 31.11px;
+            width: 24.04px;
+            height: 24.04px;
             transform: scaleY(0.5774) rotate(-45deg);
             background-color: transparent;
-            left: 4.4px; 
+            left: 3.4px; 
             z-index: 1;
         }
 
         .hex-anchor::before {
-            top: -15.56px;
+            top: -12.02px;
             border-top: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
         }
 
         .hex-anchor::after {
-            bottom: -15.56px;
+            bottom: -12.02px;
             border-bottom: 2px solid #00e5ff;
             border-left: 2px solid #00e5ff;
         }
 
         .hex-inner-symbol {
-            font-size: 14px;
+            font-size: 11px;
             z-index: 5;
             position: relative;
             line-height: 1;
-            color: #ffffff;
         }
 
-        .hex-anchor:active {
-            transform: scale(1.1);
-        }
-
+        /* STATUS BASELINE */
         .latency-footer {
             font-size: 8px;
             color: #222222;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
+            margin-top: 2px;
+            text-align: center;
         }
     </style>
 </head>
@@ -323,21 +332,7 @@
 
     <div class="brand-container">
         <div class="logo">MYROC</div>
-        <div class="tagline">Direct Line Collaboration Portal</div>
-    </div>
-
-    <div class="visualizer-area">
-        <div class="visualizer-container" id="eqContainer">
-            <script>
-                const container = document.getElementById('eqContainer');
-                for (let i = 0; i < 60; i++) {
-                    const bar = document.createElement('div');
-                    bar.className = 'eq-bar';
-                    container.appendChild(bar);
-                }
-            </script>
-        </div>
-        <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
+        <div class="tagline">Audio Collaboration Engine</div>
     </div>
 
     <div class="setup-card">
@@ -345,6 +340,20 @@
         <div class="camera-preview-box">
             <video id="webcam" autoplay playsinline muted></video>
             <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Video Off</button>
+        </div>
+
+        <div class="visualizer-area">
+            <div class="visualizer-container" id="eqContainer">
+                <script>
+                    const container = document.getElementById('eqContainer');
+                    for (let i = 0; i < 60; i++) {
+                        const bar = document.createElement('div');
+                        bar.className = 'eq-bar';
+                        container.appendChild(bar);
+                    }
+                </script>
+            </div>
+            <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
         </div>
 
         <div class="input-group">
@@ -374,13 +383,13 @@
 
     <div class="footer-network">
         <div class="social-row">
-            <a href="https://instagram.com/meldliveapp" class="hex-anchor" target="_blank">
+            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
                 <i class="fa-brands fa-instagram hex-inner-symbol"></i>
             </a>
             <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
                 <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
             </a>
-            <a href="https://x.com" class="hex-anchor" target="_blank">
+            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
                 <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
             </a>
             <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
@@ -411,7 +420,7 @@
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
                     analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 256; // Increased fft resolution to handle 60 discrete bands cleanly
+                    analyser.fftSize = 256;
                     source.connect(analyser);
                     const bufferLength = analyser.frequencyBinCount;
                     dataArray = new Uint8Array(bufferLength);
@@ -419,7 +428,7 @@
                     micBtn.classList.add('active');
                     updateVisualizer();
                 } catch (err) {
-                    alert("Input permission was denied.");
+                    alert("Input microphone permission was denied.");
                 }
             } else {
                 audioStream.getTracks().forEach(track => track.stop());
@@ -437,10 +446,9 @@
             analyser.getByteFrequencyData(dataArray);
             
             for (let i = 0; i < barElements.length; i++) {
-                // Logarithmic distribution profile so tracking visual reads naturally across deep bass/high guitar string ranges
                 let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
                 let value = dataArray[binIndex] || 0;
-                let percentHeight = (value / 255) * 85; 
+                let percentHeight = (value / 255) * 35; 
                 barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
             }
         }
@@ -471,7 +479,7 @@
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
-            alert(`Searching MyRoc servers pairing your ${inst} with a ${target}...`);
+            alert(`Searching MYROC servers pairing your ${inst} with a ${target}...`);
         }
     </script>
 </body>
