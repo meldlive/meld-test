@@ -23,7 +23,7 @@
             justify-content: space-between;
             align-items: center;
             overflow: hidden; /* Strict viewport layout enforcement */
-            padding-bottom: 5px;
+            padding-bottom: 10px;
         }
 
         /* 1. TOP HEADER LINK */
@@ -80,31 +80,31 @@
             font-weight: 700;
         }
 
-        /* 3. CONSOLE CARD CONTAINER (PACKED & TIGHTENED MULTITUDE GRID) */
+        /* 3. CONSOLE CARD CONTAINER (OPTIMIZED TO STRETCH REAL ESTATE) */
         .setup-card {
             width: 90%;
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 14px 16px;
+            padding: 16px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Keeps structural groupings predictable and packed */
+            justify-content: flex-start;
             flex-grow: 1;
-            max-height: 75vh;
-            margin: 5px 0;
+            max-height: 66vh; /* Perfectly adjusted height framework */
+            margin: 10px 0;
         }
 
-        /* VIDEO SYSTEM PREVIEW MODULE */
+        /* MAXIMUM SCREEN-FILLING VIDEO SYSTEM PREVIEW BOX */
         .camera-preview-box {
             width: 100%;
-            height: 120px; 
+            height: 145px; /* Keeps the video large and prominent */
             background-color: #0a0a0a;
             border: 1px dashed #222222;
             border-radius: 14px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -146,14 +146,14 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             width: 100%;
             flex-shrink: 0;
         }
 
         .visualizer-container {
             width: 100%;
-            height: 30px;
+            height: 35px; /* Slightly enhanced vertical profile */
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -189,9 +189,9 @@
             border-color: #00e5ff;
         }
 
-        /* DROPDOWN CONFIGURATIONS (SPACING ADJUSTED & TIGHTENED NATIVELY) */
+        /* COMPACT DROPDOWN SECTIONS */
         .input-group {
-            margin-bottom: 6px; /* Reduced gaps between elements decisively */
+            margin-bottom: 6px;
             flex-shrink: 0;
         }
 
@@ -219,7 +219,7 @@
             -webkit-appearance: none;
         }
 
-        /* BLUE ACTION TRIGGER BUTTON */
+        /* BLUE BRAND ACTION BUTTON */
         .jam-btn {
             width: 100%;
             background: #000000;
@@ -233,7 +233,6 @@
             letter-spacing: 3px;
             cursor: pointer;
             margin-top: 6px;
-            margin-bottom: 10px;
             transition: all 0.2s ease;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
             flex-shrink: 0;
@@ -246,14 +245,15 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* FOOTER MODULE ENCLOSED SAFELY INSIDE CARD CONTAINER BASELINE */
+        /* 4. SOCIAL MEDIA BAR PLACED STRATEGICALLY AT THE BODY BOTTOM */
         .footer-network {
             width: 100%;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid #111111; /* Kept the line look right at the base */
             padding-top: 8px;
             flex-shrink: 0;
         }
@@ -272,7 +272,7 @@
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
-            margin: 6px 0; /* Tightened margins to draw components into absolute view bounds */
+            margin: 6px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -380,22 +380,22 @@
         </div>
 
         <button class="jam-btn" onclick="enterJam()">Jam Now</button>
+    </div>
 
-        <div class="footer-network">
-            <div class="social-row">
-                <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
-                    <i class="fa-brands fa-instagram hex-inner-symbol"></i>
-                </a>
-                <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
-                    <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
-                </a>
-                <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
-                    <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
-                </a>
-                <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
-                    <i class="fa-regular fa-envelope hex-inner-symbol"></i>
-                </a>
-            </div>
+    <div class="footer-network">
+        <div class="social-row">
+            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
+                <i class="fa-brands fa-instagram hex-inner-symbol"></i>
+            </a>
+            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
+                <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
+            </a>
+            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
+                <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
+            </a>
+            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
+                <i class="fa-regular fa-envelope hex-inner-symbol"></i>
+            </a>
         </div>
     </div>
 
@@ -450,7 +450,7 @@
             for (let i = 0; i < barElements.length; i++) {
                 let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
                 let value = dataArray[binIndex] || 0;
-                let percentHeight = (value / 255) * 30; 
+                let percentHeight = (value / 255) * 42; 
                 barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
             }
         }
