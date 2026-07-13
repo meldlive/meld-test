@@ -22,8 +22,8 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            overflow: hidden; /* Enforces strict app viewport limits */
-            padding-bottom: 5px;
+            overflow: hidden; /* Enforces absolute zero-scroll layout bounds */
+            padding-bottom: 10px;
         }
 
         /* 1. TOP HEADER LINK */
@@ -31,7 +31,7 @@
             width: 100%;
             background-color: #050505;
             border-bottom: 1px solid #111111;
-            padding: 8px 20px;
+            padding: 10px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -55,13 +55,13 @@
         /* 2. BRANDING HEADLINE GROUP */
         .brand-container {
             text-align: center;
-            margin-top: 5px;
+            margin-top: 10px;
             width: 100%;
             flex-shrink: 0;
         }
 
         .logo {
-            font-size: 34px;
+            font-size: 36px;
             font-weight: 900;
             letter-spacing: 8px;
             background: linear-gradient(180deg, #ffffff 0%, #888888 100%);
@@ -76,35 +76,34 @@
             color: #444444;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-top: 2px;
+            margin-top: 4px;
             font-weight: 700;
         }
 
-        /* 3. CONSOLE CARD CONTAINER (EXPANDED TO VERTICALLY FILLReal estate) */
+        /* 3. CONSOLE CARD CONTAINER (EXPANDED TO VERTICALLY FILL THE VIEWPORT) */
         .setup-card {
             width: 90%;
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 16px;
+            padding: 20px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Stretches interior layout out fully */
+            justify-content: space-between; /* Stretches elements down to fill the card bounds */
             flex-grow: 1;
-            max-height: 76vh; /* Allowed more space to maximize presentation size */
-            margin: 8px 0;
+            max-height: 78vh; /* Confidently claims screen real estate */
+            margin: 15px 0;
         }
 
-        /* VIDEO SYSTEM PREVIEW MODULE */
+        /* EXPANDED VIDEO SYSTEM PREVIEW MODULE */
         .camera-preview-box {
             width: 100%;
-            height: 125px; /* Stretched up to fill empty layout space */
+            height: 150px; /* Stretched out to properly fill the card layout space */
             background-color: #0a0a0a;
-            border: 1px dashed #222222;
+            border: 1px solid #1c1c1c;
             border-radius: 14px;
-            margin-bottom: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -124,7 +123,7 @@
             background: #111111;
             border: 1px solid #222222;
             color: #888888;
-            padding: 6px 14px;
+            padding: 8px 18px;
             border-radius: 20px;
             font-size: 9px;
             font-weight: 700;
@@ -145,8 +144,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            margin-bottom: 8px;
+            gap: 6px;
+            margin: 5px 0;
             width: 100%;
             flex-shrink: 0;
         }
@@ -179,7 +178,7 @@
             background: none;
             border: 1px solid rgba(0, 229, 255, 0.3);
             cursor: pointer;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             transition: all 0.2s;
         }
@@ -189,13 +188,10 @@
             border-color: #00e5ff;
         }
 
-        /* DROPDOWN CONFIGURATIONS */
+        /* DROPDOWN CONFIGURATIONS (STRETCHED COMFORTABLY) */
         .input-group {
             margin-bottom: 8px;
-            flex-grow: 1; /* Allows selectors to claim comfortable breathing room vertically */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-shrink: 0;
         }
 
         .input-group label {
@@ -204,7 +200,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #555555;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-weight: 700;
         }
 
@@ -213,7 +209,7 @@
             background: #0a0a0a;
             border: 1px solid #161616;
             color: #ffffff;
-            padding: 12px;
+            padding: 14px 12px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -222,20 +218,20 @@
             -webkit-appearance: none;
         }
 
-        /* BLUE BRAND ACTION TRIGGER BUTTON */
+        /* NEON BLUE ACTION TRIGGER BUTTON */
         .jam-btn {
             width: 100%;
             background: #000000;
             color: #00e5ff;
             border: 2px solid #00e5ff;
-            padding: 14px;
+            padding: 16px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
             transition: all 0.2s ease;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
             flex-shrink: 0;
@@ -248,15 +244,15 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* INTERNAL FOOTER SECTION WITH NEW SEPARATING VISUAL DIVIDER */
+        /* INTERNAL FOOTER SECTION WITH NEW SOLID DIVIDER LINE */
         .footer-network {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            border-top: 1px solid #1a1a1a; /* Clean visual separator layout line */
-            padding-top: 8px;
+            border-top: 1px solid #1c1c1c; /* Sharp visual separator divide line */
+            padding-top: 10px;
             flex-shrink: 0;
         }
 
@@ -264,13 +260,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .hex-anchor {
             position: relative;
-            width: 34px; 
-            height: 19.63px;
+            width: 38px; 
+            height: 21.94px;
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
@@ -286,28 +282,28 @@
         .hex-anchor::before, .hex-anchor::after {
             content: "";
             position: absolute;
-            width: 24.04px;
-            height: 24.04px;
+            width: 26.87px;
+            height: 26.87px;
             transform: scaleY(0.5774) rotate(-45deg);
             background-color: transparent;
-            left: 3.4px; 
+            left: 3.8px; 
             z-index: 1;
         }
 
         .hex-anchor::before {
-            top: -12.02px;
+            top: -13.44px;
             border-top: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
         }
 
         .hex-anchor::after {
-            bottom: -12.02px;
+            bottom: -13.44px;
             border-bottom: 2px solid #00e5ff;
             border-left: 2px solid #00e5ff;
         }
 
         .hex-inner-symbol {
-            font-size: 11px;
+            font-size: 13px;
             z-index: 5;
             position: relative;
             line-height: 1;
@@ -320,7 +316,6 @@
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            margin-top: 2px;
             text-align: center;
             width: 100%;
             flex-shrink: 0;
@@ -414,7 +409,7 @@
         let animationFrameId = null;
         let barElements = [];
 
-        // Isolated Audio track dynamic engine request
+        // Isolated Microphone Feed Request Engine
         async function toggleMicFeed() {
             const micBtn = document.getElementById('micBtn');
             barElements = document.querySelectorAll('.eq-bar');
@@ -458,7 +453,7 @@
             }
         }
 
-        // Isolated Video track dynamic engine request
+        // Isolated Camera Module Request Engine
         async function toggleCam() {
             const btn = document.getElementById('camBtn');
             const video = document.getElementById('webcam');
