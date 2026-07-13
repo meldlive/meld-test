@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MYROC | Powered by MELD</title>
+    <title>MyRoc | Powered by MELD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -17,13 +17,13 @@
         body {
             background-color: #000000;
             color: #ffffff;
-            height: 100vh;
+            height: 100vh; /* Enforces absolute fixed screen heights */
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: space-between; /* Spreads components out naturally to fill the height */
             align-items: center;
-            overflow: hidden; /* Strict viewport layout enforcement */
-            padding-bottom: 10px;
+            overflow: hidden; /* Hard cut to kill any scrolling */
+            padding-bottom: 5px;
         }
 
         /* 1. TOP HEADER LINK */
@@ -31,7 +31,7 @@
             width: 100%;
             background-color: #050505;
             border-bottom: 1px solid #111111;
-            padding: 8px 20px;
+            padding: 10px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -52,59 +52,56 @@
             color: #00e5ff;
         }
 
-        /* 2. BRANDING HEADLINE GROUP */
+        /* 2. PREMIUM TYPOGRAPHY BRANDING */
         .brand-container {
             text-align: center;
-            margin-top: 5px;
+            margin-top: 10px;
             width: 100%;
             flex-shrink: 0;
         }
 
         .logo {
-            font-size: 34px;
+            font-size: 38px;
             font-weight: 900;
-            letter-spacing: 8px;
+            letter-spacing: 8px; /* High-end horizontal tracking */
             background: linear-gradient(180deg, #ffffff 0%, #888888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
-            line-height: 1.1;
         }
 
         .tagline {
-            font-size: 9px;
+            font-size: 10px;
             color: #444444;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 2px;
+            letter-spacing: 2.5px;
+            margin-top: 4px;
             font-weight: 700;
         }
 
-        /* 3. CONSOLE CARD CONTAINER (OPTIMIZED TO STRETCH REAL ESTATE) */
+        /* 3. CONSOLE DASHBOARD CARD (EXPANDED & TIGHTENED) */
         .setup-card {
             width: 90%;
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 16px;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+            padding: 20px; /* Reduced breathing room to tighten layout */
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95);
+            flex-grow: 1; /* Card stretches out to fill the gap */
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            flex-grow: 1;
-            max-height: 66vh; /* Perfectly adjusted height framework */
-            margin: 10px 0;
+            justify-content: center;
+            margin-bottom: 25px;
         }
 
-        /* MAXIMUM SCREEN-FILLING VIDEO SYSTEM PREVIEW BOX */
         .camera-preview-box {
             width: 100%;
-            height: 145px; /* Keeps the video large and prominent */
+            height: 130px; /* Shaved vertical dimension */
             background-color: #0a0a0a;
             border: 1px dashed #222222;
-            border-radius: 14px;
-            margin-bottom: 8px;
+            border-radius: 16px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -124,9 +121,9 @@
             background: #111111;
             border: 1px solid #222222;
             color: #888888;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -140,23 +137,24 @@
             color: #00e5ff;
         }
 
-        /* AUDIO VISUALIZER MODULE */
+        /* 4. TIGHTENED FULL SCREEN EQUALIZER VISUALIZER */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin: 15px 0;
             width: 100%;
             flex-shrink: 0;
         }
 
         .visualizer-container {
             width: 100%;
-            height: 35px; /* Slightly enhanced vertical profile */
+            height: 50px; /* Shaved vertical stack height */
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0 4px;
         }
 
         .eq-bar {
@@ -170,7 +168,7 @@
         }
 
         .mic-toggle-link {
-            font-size: 9px;
+            font-size: 10px;
             color: #00e5ff;
             text-decoration: none;
             text-transform: uppercase;
@@ -179,7 +177,7 @@
             background: none;
             border: 1px solid rgba(0, 229, 255, 0.3);
             cursor: pointer;
-            padding: 4px 10px;
+            padding: 6px 14px;
             border-radius: 20px;
             transition: all 0.2s;
         }
@@ -189,19 +187,19 @@
             border-color: #00e5ff;
         }
 
-        /* COMPACT DROPDOWN SECTIONS */
+        /* INPUT GROUPS */
         .input-group {
-            margin-bottom: 6px;
+            margin-bottom: 20px;
             flex-shrink: 0;
         }
 
         .input-group label {
             display: block;
-            font-size: 9px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: #555555;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             font-weight: 700;
         }
 
@@ -210,7 +208,7 @@
             background: #0a0a0a;
             border: 1px solid #161616;
             color: #ffffff;
-            padding: 10px;
+            padding: 14px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -219,42 +217,33 @@
             -webkit-appearance: none;
         }
 
-        /* BLUE BRAND ACTION BUTTON */
         .jam-btn {
             width: 100%;
-            background: #000000;
-            color: #00e5ff;
-            border: 2px solid #00e5ff;
-            padding: 12px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 18px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            margin-top: 6px;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
             flex-shrink: 0;
         }
 
-        .jam-btn:active {
-            transform: scale(0.98);
-            background: #00e5ff;
-            color: #000000;
-            box-shadow: 0 0 25px #00e5ff;
-        }
-
-        /* 4. SOCIAL MEDIA BAR PLACED STRATEGICALLY AT THE BODY BOTTOM */
+        /* 5. MATCHING NEON BLUE HEXAGON FOOTER DOCK (PULLED INTO VIEW BOUNDS NATIVELY) */
         .footer-network {
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            border-top: 1px solid #111111; /* Kept the line look right at the base */
-            padding-top: 8px;
+            gap: 16px;
+            border-top: 1px solid #111111;
+            padding-top: 20px;
+            margin-bottom: 10px;
             flex-shrink: 0;
         }
 
@@ -263,16 +252,17 @@
             justify-content: center;
             align-items: center;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .hex-anchor {
             position: relative;
-            width: 34px; 
-            height: 19.63px;
+            width: 44px; /* Scaled hexagons down slightly to fit tight bounds */
+            height: 25.4px;
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
-            margin: 6px 0;
+            margin: 12.7px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -284,44 +274,44 @@
         .hex-anchor::before, .hex-anchor::after {
             content: "";
             position: absolute;
-            width: 24.04px;
-            height: 24.04px;
+            width: 31.11px;
+            height: 31.11px;
             transform: scaleY(0.5774) rotate(-45deg);
             background-color: transparent;
-            left: 3.4px; 
+            left: 4.4px; 
             z-index: 1;
         }
 
         .hex-anchor::before {
-            top: -12.02px;
+            top: -15.56px;
             border-top: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
         }
 
         .hex-anchor::after {
-            bottom: -12.02px;
+            bottom: -15.56px;
             border-bottom: 2px solid #00e5ff;
             border-left: 2px solid #00e5ff;
         }
 
         .hex-inner-symbol {
-            font-size: 11px;
+            font-size: 14px;
             z-index: 5;
             position: relative;
             line-height: 1;
+            color: #ffffff;
         }
 
-        /* STATUS BASELINE */
+        .hex-anchor:active {
+            transform: scale(1.1);
+        }
+
         .latency-footer {
             font-size: 8px;
             color: #222222;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            margin-top: 2px;
-            text-align: center;
-            width: 100%;
-            flex-shrink: 0;
         }
     </style>
 </head>
@@ -333,7 +323,21 @@
 
     <div class="brand-container">
         <div class="logo">MYROC</div>
-        <div class="tagline">Audio Collaboration Engine</div>
+        <div class="tagline">Direct Line Collaboration Portal</div>
+    </div>
+
+    <div class="visualizer-area">
+        <div class="visualizer-container" id="eqContainer">
+            <script>
+                const container = document.getElementById('eqContainer');
+                for (let i = 0; i < 60; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'eq-bar';
+                    container.appendChild(bar);
+                }
+            </script>
+        </div>
+        <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
     </div>
 
     <div class="setup-card">
@@ -341,20 +345,6 @@
         <div class="camera-preview-box">
             <video id="webcam" autoplay playsinline muted></video>
             <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Video Off</button>
-        </div>
-
-        <div class="visualizer-area">
-            <div class="visualizer-container" id="eqContainer">
-                <script>
-                    const container = document.getElementById('eqContainer');
-                    for (let i = 0; i < 60; i++) {
-                        const bar = document.createElement('div');
-                        bar.className = 'eq-bar';
-                        container.appendChild(bar);
-                    }
-                </script>
-            </div>
-            <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
         </div>
 
         <div class="input-group">
@@ -384,23 +374,22 @@
 
     <div class="footer-network">
         <div class="social-row">
-            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
+            <a href="https://instagram.com/meldliveapp" class="hex-anchor" target="_blank">
                 <i class="fa-brands fa-instagram hex-inner-symbol"></i>
             </a>
             <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
                 <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
             </a>
-            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
+            <a href="https://x.com" class="hex-anchor" target="_blank">
                 <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
             </a>
             <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
                 <i class="fa-regular fa-envelope hex-inner-symbol"></i>
             </a>
         </div>
-    </div>
-
-    <div class="latency-footer">
-        Server Status: Operational (0ms)
+        <div class="latency-footer">
+            Server Status: Operational (0ms)
+        </div>
     </div>
 
     <script>
@@ -422,7 +411,7 @@
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
                     analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 256;
+                    analyser.fftSize = 256; // Increased fft resolution to handle 60 discrete bands cleanly
                     source.connect(analyser);
                     const bufferLength = analyser.frequencyBinCount;
                     dataArray = new Uint8Array(bufferLength);
@@ -430,7 +419,7 @@
                     micBtn.classList.add('active');
                     updateVisualizer();
                 } catch (err) {
-                    alert("Input microphone permission was denied.");
+                    alert("Input permission was denied.");
                 }
             } else {
                 audioStream.getTracks().forEach(track => track.stop());
@@ -448,9 +437,10 @@
             analyser.getByteFrequencyData(dataArray);
             
             for (let i = 0; i < barElements.length; i++) {
+                // Logarithmic distribution profile so tracking visual reads naturally across deep bass/high guitar string ranges
                 let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
                 let value = dataArray[binIndex] || 0;
-                let percentHeight = (value / 255) * 42; 
+                let percentHeight = (value / 255) * 85; 
                 barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
             }
         }
@@ -481,7 +471,7 @@
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
-            alert(`Searching MYROC servers pairing your ${inst} with a ${target}...`);
+            alert(`Searching MyRoc servers pairing your ${inst} with a ${target}...`);
         }
     </script>
 </body>
