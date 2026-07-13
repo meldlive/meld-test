@@ -355,14 +355,15 @@
         <div class="tagline">Audio Collaboration Engine</div>
     </div>
 
-    <!-- Added id="setup-card" here so we can control its visibility -->
-    <div class="setup-card" id="setup-card">
+    <div class="setup-card">
         
+        <!-- Video stays completely visible and toggleable -->
         <div class="camera-preview-box">
             <video id="webcam" autoplay playsinline muted></video>
             <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Click to Turn Video On</button>
         </div>
 
+        <!-- Equalizer stays active and responsive to instrument feed -->
         <div class="visualizer-area">
             <div class="visualizer-container" id="eqContainer">
                 <script>
@@ -377,35 +378,40 @@
             <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
         </div>
 
-        <div class="input-group">
-            <label for="instrument">What You're Plugging In</label>
-            <select id="instrument">
-                <option value="Electric Guitar">🎸 Electric Guitar</option>
-                <option value="Bass Guitar">🎸 Bass Guitar</option>
-                <option value="Electronic Drums">🥁 Electronic Drums</option>
-                <option value="Piano / Keyboard">🎹 Digital Piano / Keyboard</option>
-                <option value="Electric Violin">🎻 Electric Violin</option>
-            </select>
+        <!-- Group wrapper for dropdown inputs so we can hide them cleanly -->
+        <div id="setup-inputs">
+            <div class="input-group">
+                <label for="instrument">What You're Plugging In</label>
+                <select id="instrument">
+                    <option value="Electric Guitar">🎸 Electric Guitar</option>
+                    <option value="Bass Guitar">🎸 Bass Guitar</option>
+                    <option value="Electronic Drums">🥁 Electronic Drums</option>
+                    <option value="Piano / Keyboard">🎹 Digital Piano / Keyboard</option>
+                    <option value="Electric Violin">🎻 Electric Violin</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="search">Who You're Looking For</label>
+                <select id="search">
+                    <option value="Electric Guitarist">🎸 Electric Guitarist</option>
+                    <option value="Bass Player">🎸 Bassist</option>
+                    <option value="Drummer">🥁 Drummer</option>
+                    <option value="Keyboardist">🎹 Keyboardist</option>
+                    <option value="Violinist">🎻 Violinist</option>
+                </select>
+            </div>
+
+            <button class="jam-btn" onclick="enterJam()">Jam Now</button>
         </div>
 
-        <div class="input-group">
-            <label for="search">Who You're Looking For</label>
-            <select id="search">
-                <option value="Electric Guitarist">🎸 Electric Guitarist</option>
-                <option value="Bass Player">🎸 Bassist</option>
-                <option value="Drummer">🥁 Drummer</option>
-                <option value="Keyboardist">🎹 Keyboardist</option>
-                <option value="Violinist">🎻 Violinist</option>
-            </select>
+        <!-- Active Jam Room status card built inside the main container -->
+        <div id="jam-room-display" style="display: none; flex-direction: column; align-items: center; padding: 10px 0; gap: 12px; margin-top: 5px;">
+            <h2 style="font-size: 18px; color: #00e5ff; text-transform: uppercase; letter-spacing: 2px;">Jam Room</h2>
+            <p id="jam-status" style="font-size: 10px; color: #888888; text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.4;"></p>
+            <button class="jam-btn" style="border-color: #ff3b30; color: #ff3b30; box-shadow: 0 0 12px rgba(255, 59, 48, 0.15);" onclick="leaveJam()">Disconnect</button>
         </div>
 
-        <button class="jam-btn" onclick="enterJam()">Jam Now</button>
-    </div>
-
-    <!-- NEW FOR STEP 1: Blank Jam Space Container (Hidden by default) -->
-    <div id="jam-screen" style="display: none; width: 90%; max-width: 400px; background: #060606; border: 1px solid #121212; padding: 24px 16px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.95); text-align: center; margin-top: 8px; margin-bottom: 10px; flex-shrink: 0;">
-        <h2 style="font-size: 18px; color: #00e5ff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">Jam Room</h2>
-        <p id="jam-status" style="font-size: 11px; color: #666666; text-transform: uppercase; letter-spacing: 1px;">Connecting your session...</p>
     </div>
 
     <div class="footer-network">
@@ -489,7 +495,7 @@
                     videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
                     video.srcObject = videoStream;
                     video.style.display = 'block';
-                    btn.innerText = "Turn Video Off"; // Clear text state conversion on camera load
+                    btn.innerText = "Turn Video Off"; 
                     btn.classList.add('active');
                 } catch (err) {
                     alert("Camera capture permission was denied.");
@@ -498,28 +504,34 @@
                 videoStream.getTracks().forEach(track => track.stop());
                 videoStream = null;
                 video.style.display = 'none';
-                btn.innerText = "Click to Turn Video On"; // Revert status text string
+                btn.innerText = "Click to Turn Video On"; 
                 btn.classList.remove('active');
             }
         }
 
-        // Updated for Step 1: Smooth screen switch transition
+        // Transitions cleanly to Jam Room and preserves camera/eq streams
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
             
-            // Hide the setup card
-            document.getElementById('setup-card').style.display = 'none';
+            // Hide selection dropdowns and the initial jam button
+            document.getElementById('setup-inputs').style.display = 'none';
             
-            // Update status text with selections
+            // Set up status detail
             document.getElementById('jam-status').innerText = `Connecting your ${inst} with a ${target}...`;
             
-            // Reveal the blank Jam Room screen
-            const jamScreen = document.getElementById('jam-screen');
-            jamScreen.style.display = 'flex';
-            jamScreen.style.flexDirection = 'column';
-            jamScreen.style.justifyContent = 'center';
-            jamScreen.style.alignItems = 'center';
+            // Reveal active Jam Room space
+            const jamDisplay = document.getElementById('jam-room-display');
+            jamDisplay.style.display = 'flex';
+        }
+
+        // Returns seamlessly back to setup screen
+        function leaveJam() {
+            // Hide the active Jam Room controls
+            document.getElementById('jam-room-display').style.display = 'none';
+            
+            // Bring back setup dropdowns
+            document.getElementById('setup-inputs').style.display = 'block';
         }
     </script>
 </body>
