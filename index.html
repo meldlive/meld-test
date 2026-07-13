@@ -20,10 +20,10 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start; /* Switch to top-packed alignment to control gaps */
             align-items: center;
             overflow: hidden; /* Strict viewport layout protection */
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         /* 1. TOP HEADER LINK */
@@ -55,7 +55,7 @@
         /* 2. BRANDING HEADLINE GROUP */
         .brand-container {
             text-align: center;
-            margin-top: 5px;
+            margin-top: 6px;
             width: 100%;
             flex-shrink: 0;
         }
@@ -80,7 +80,7 @@
             font-weight: 700;
         }
 
-        /* 3. CENTRAL CONSOLE CARD FRAME (EXACT MATCH) */
+        /* 3. CENTRAL CONSOLE CARD FRAME */
         .setup-card {
             width: 90%;
             max-width: 400px;
@@ -92,9 +92,9 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            flex-grow: 1;
-            max-height: 62vh; /* Ensures perfect padding buffers top & bottom */
-            margin: 5px 0;
+            flex-shrink: 0;
+            margin-top: 10px;
+            margin-bottom: 12px; /* Controlled explicit gap below the box */
         }
 
         /* CAMERA MODULE PREVIEW */
@@ -244,16 +244,15 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* 4. BALANCED SOVEREIGN FOOTER NETWORKS OUTSIDE OF BOX */
+        /* 4. PACKED FOOTER ROW PLACED DIRECTLY BELOW THE CONSOLE CARD BOX */
         .footer-network {
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
             flex-shrink: 0;
-            margin-top: auto; /* Uses flex rules to snap smoothly below the card */
         }
 
         .social-row {
@@ -270,7 +269,7 @@
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
-            margin: 6px 0;
+            margin: 4px 0; /* Shrunken margins to snap layout together cleanly */
             display: flex;
             justify-content: center;
             align-items: center;
