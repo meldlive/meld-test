@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MELD | Setup</title>
+    <title>MyRoc | Powered by MELD</title>
     <style>
         * {
             box-sizing: border-box;
@@ -21,21 +21,47 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 30px 20px;
             overflow-x: hidden;
         }
 
-        /* 1. BRANDING */
+        /* 1. UMBRELLA COMPANY STATIC NETWORK BAR */
+        .umbrella-bar {
+            width: 100%;
+            background-color: #050505;
+            border-bottom: 1px solid #111111;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .umbrella-brand {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #666666;
+            text-transform: uppercase;
+        }
+
+        .umbrella-node {
+            font-size: 10px;
+            color: #00e5ff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* 2. DIVISION BRANDING */
         .brand-container {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 20px;
             width: 100%;
         }
 
         .logo {
-            font-size: 42px;
+            font-size: 44px;
             font-weight: 900;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             color: #ffffff;
         }
 
@@ -48,13 +74,13 @@
             font-weight: 700;
         }
 
-        /* 2. DYNAMIC EQUALIZER AREA */
+        /* 3. DYNAMIC EQUALIZER AREA */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            margin: 20px 0;
+            margin: 15px 0;
             width: 100%;
         }
 
@@ -70,7 +96,7 @@
 
         .eq-bar {
             width: 7px;
-            height: 4px; /* Default flat state */
+            height: 4px; /* Default flat state until triggered */
             background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
             border-radius: 4px;
             box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
@@ -100,7 +126,7 @@
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
         }
 
-        /* 3. CONFIGURATION CARD */
+        /* 4. FULL-SCREEN EXPANDED CONFIGURATION CARD */
         .setup-card {
             width: 100%;
             max-width: 440px;
@@ -113,7 +139,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .camera-preview-box {
@@ -190,6 +216,10 @@
             -webkit-appearance: none;
         }
 
+        .input-group select:focus {
+            border-color: #00e5ff;
+        }
+
         .jam-btn {
             width: 100%;
             background: #ffffff;
@@ -206,21 +236,80 @@
             box-shadow: 0 6px 25px rgba(255, 255, 255, 0.15);
         }
 
+        .jam-btn:active {
+            transform: scale(0.97);
+            background: #00e5ff;
+        }
+
+        /* 5. MULTI-LINK CORE SOCIAL NAVIGATION NAVIGATION BAR */
+        .footer-network {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 15px;
+            border-top: 1px solid #111111;
+            padding-top: 20px;
+        }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: color 0.2s;
+        }
+
+        .social-link:hover, .social-link:active {
+            color: #00e5ff;
+        }
+
+        .mail-anchor {
+            font-size: 20px;
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.6;
+            margin-top: 4px;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .mail-anchor:active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
         .latency-footer {
-            font-size: 10px;
+            font-size: 9px;
             color: #333333;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            margin-top: 10px;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
+    <div class="umbrella-bar">
+        <div class="umbrella-brand">MELD Umbrella System</div>
+        <div class="umbrella-node">Isolated Node-01</div>
+    </div>
+
     <div class="brand-container">
-        <div class="logo">MELD</div>
-        <div class="tagline">High-Fidelity Collaboration Portal</div>
+        <div class="logo">MyRoc</div>
+        <div class="tagline">Direct Line Collaboration Portal</div>
     </div>
 
     <div class="visualizer-area">
@@ -232,10 +321,7 @@
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
-            <div class="visualizer-container">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-            </div>
+            <div class="eq-bar"></div>
             <div class="eq-bar"></div>
         </div>
         <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
@@ -249,53 +335,40 @@
         </div>
 
         <div class="input-group">
-            <label for="instrument">What You're Playing</label>
+            <label for="instrument">What You're Plugging In</label>
             <select id="instrument">
-                <optgroup label="Strings">
-                    <option value="Electric Guitar">🎸 Electric Guitar</option>
-                    <option value="Acoustic Guitar">🎸 Acoustic Guitar</option>
-                    <option value="Bass Guitar">🎸 Bass Guitar</option>
-                </optgroup>
-                <optgroup label="Vocals">
-                    <option value="Lead Vocals">🎤 Lead Vocals</option>
-                    <option value="Backing Vocals">🎙️ Backing Vocals / Mic</option>
-                </optgroup>
-                <optgroup label="Keys & Synths">
-                    <option value="Keyboard / Piano">🎹 Keyboard / Piano</option>
-                    <option value="Synthesizer">🎛️ Synthesizer / Midi</option>
-                </optgroup>
-                <optgroup label="Percussion">
-                    <option value="Electronic Drums">🥁 Electronic Drums</option>
-                    <option value="Acoustic Drums">🥁 Acoustic Drums</option>
-                </optgroup>
+                <option value="Electric Guitar">🎸 Electric Guitar</option>
+                <option value="Bass Guitar">🎸 Bass Guitar</option>
+                <option value="Electronic Drums">🥁 Electronic Drums</option>
+                <option value="Piano / Keyboard">🎹 Digital Piano / Keyboard</option>
+                <option value="Electric Violin">🎻 Electric Violin</option>
             </select>
         </div>
 
         <div class="input-group">
             <label for="search">Who You're Looking For</label>
             <select id="search">
-                <optgroup label="Strings Needed">
-                    <option value="Electric Guitarist">🎸 Electric Guitarist</option>
-                    <option value="Acoustic Guitarist">🎸 Acoustic Guitarist</option>
-                    <option value="Bass Player">🎸 Bassist</option>
-                </optgroup>
-                <optgroup label="Vocals Needed">
-                    <option value="Vocalist">🎤 Vocalist / Singer</option>
-                </optgroup>
-                <optgroup label="Keys Needed">
-                    <option value="Keyboardist">🎹 Keyboardist</option>
-                </optgroup>
-                <optgroup label="Percussion Needed">
-                    <option value="Drummer">🥁 Drummer / Beatmaker</option>
-                </optgroup>
+                <option value="Electric Guitarist">🎸 Electric Guitarist</option>
+                <option value="Bass Player">🎸 Bassist</option>
+                <option value="Drummer">🥁 Drummer</option>
+                <option value="Keyboardist">🎹 Keyboardist</option>
+                <option value="Violinist">🎻 Violinist</option>
             </select>
         </div>
 
         <button class="jam-btn" onclick="enterJam()">Jam Now</button>
     </div>
 
-    <div class="latency-footer">
-        OPTIMIZED AUDIO ENGINES ACTIVE • 0MS LATENCY
+    <div class="footer-network">
+        <div class="social-row">
+            <a href="https://instagram.com" class="social-link" target="_blank">Instagram</a>
+            <a href="https://tiktok.com" class="social-link" target="_blank">TikTok</a>
+            <a href="https://meldliveapp.com" class="social-link" target="_blank">Meld Website</a>
+        </div>
+        <a href="mailto:meldliveapp@gmail.com" class="mail-anchor">✉️</a>
+        <div class="latency-footer">
+            Server Status: Operational (0ms)
+        </div>
     </div>
 
     <script>
@@ -313,40 +386,24 @@
             if (!audioStream) {
                 try {
                     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                    
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
-                    
                     analyser = audioContext.createAnalyser();
                     analyser.fftSize = 32;
-                    
                     source.connect(analyser);
-                    
                     const bufferLength = analyser.frequencyBinCount;
                     dataArray = new Uint8Array(bufferLength);
-                    
                     micBtn.innerText = "Mute Input";
                     micBtn.classList.add('active');
-                    
                     updateVisualizer();
                 } catch (err) {
-                    alert("Microphone permission was denied.");
+                    alert("Input permission was denied.");
                 }
             } else {
-                // Kill the mic stream completely
                 audioStream.getTracks().forEach(track => track.stop());
                 audioStream = null;
-                
-                // Cancel visualizer rendering loop
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                }
-                
-                // Drop equalizer bars cleanly to flat state
-                for (let i = 0; i < barElements.length; i++) {
-                    barElements[i].style.height = '4px';
-                }
-                
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                for (let i = 0; i < barElements.length; i++) barElements[i].style.height = '4px';
                 micBtn.innerText = "Test Instrument Input";
                 micBtn.classList.remove('active');
             }
@@ -355,9 +412,7 @@
         function updateVisualizer() {
             if (!analyser) return;
             animationFrameId = requestAnimationFrame(updateVisualizer);
-            
             analyser.getByteFrequencyData(dataArray);
-            
             for (let i = 0; i < barElements.length; i++) {
                 let value = dataArray[i] || 0;
                 let percentHeight = (value / 255) * 85; 
@@ -388,10 +443,12 @@
             }
         }
 
+        document.cookie = "Cross-Site-Cookie=MeldNetworkNode; SameSite=None; Secure";
+
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
-            alert(`Searching for rooms pairing a ${inst} with a ${target}...`);
+            alert(`Searching isolated MyRoc servers pairing your ${inst} with a ${target}...`);
         }
     </script>
 </body>
