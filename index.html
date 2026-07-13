@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MyRoc | Powered by MELD</title>
+    <title>MYROC | Powered by MELD</title>
     <style>
         * {
             box-sizing: border-box;
@@ -24,23 +24,29 @@
             overflow-x: hidden;
         }
 
-        /* 1. PARENT MELD ENGINE ASSIGNMENT LAYER */
+        /* 1. TOP ANCHOR MELD LINK HEADER */
         .umbrella-bar {
             width: 100%;
             background-color: #050505;
             border-bottom: 1px solid #111111;
-            padding: 12px 20px;
+            padding: 14px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .umbrella-brand {
+        .umbrella-link {
             font-size: 11px;
             font-weight: 800;
             letter-spacing: 3px;
             color: #666666;
             text-transform: uppercase;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .umbrella-link:hover, .umbrella-link:active {
+            color: #00e5ff;
         }
 
         /* 2. DIVISION BRANDING */
@@ -55,7 +61,6 @@
             font-weight: 900;
             letter-spacing: 6px;
             color: #ffffff;
-            text-transform: uppercase; /* Ensures ALL CAPS */
         }
 
         .tagline {
@@ -67,29 +72,29 @@
             font-weight: 700;
         }
 
-        /* 3. FULL SCREEN EQUALIZER VISUALIZER VISUALIZER AREA */
+        /* 3. FULL SCREEN EQUALIZER VISUALIZER AREA */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
             margin: 15px 0;
-            width: 100%; /* Full screen span container */
+            width: 100%;
         }
 
         .visualizer-container {
-            width: 100%; /* Spans full body width */
+            width: 100%;
             height: 90px;
             display: flex;
             align-items: center;
-            justify-content: space-around; /* Spread bars across full screen */
-            padding: 0 10px; /* Minimal padding at edges */
+            justify-content: space-around;
+            padding: 0 10px;
         }
 
         .eq-bar {
-            flex-grow: 1; /* Bars stretch to fill space */
-            max-width: 10px; /* Limits individual bar width slightly */
-            height: 4px; /* Default flat state until triggered */
+            flex-grow: 1;
+            max-width: 10px;
+            height: 4px;
             background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
             border-radius: 4px;
             box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
@@ -203,13 +208,8 @@
             font-size: 15px;
             font-weight: 600;
             outline: none;
-            cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
-        }
-
-        .input-group select:focus {
-            border-color: #00e5ff;
         }
 
         .jam-btn {
@@ -233,54 +233,83 @@
             background: #00e5ff;
         }
 
-        /* 5. MULTI-ICON SOCIAL NAVIGATION FOOTER */
+        /* 5. LANDING PAGE RECREATED HEXAGON NETWORK FOOTER */
         .footer-network {
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border-top: 1px solid #111111;
-            padding-top: 20px;
+            padding-top: 25px;
         }
 
         .social-row {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
+            gap: 16px;
         }
 
-        .social-icon-link {
-            text-decoration: none;
-            color: #888888;
-            transition: color 0.2s, transform 0.1s;
-        }
-
-        .social-icon-link:hover, .social-icon-link:active {
-            color: #00e5ff;
-            transform: scale(1.1);
-        }
-
-        /* CSS Icon Placeholders */
-        .icon {
-            font-size: 20px;
-            font-weight: 900;
-            width: 20px;
-            height: 20px;
+        .hex-anchor {
+            position: relative;
+            width: 50px; 
+            height: 28.87px;
+            background-color: transparent;
+            border-left: 2px solid #ffcc00;
+            border-right: 2px solid #ffcc00;
+            margin: 14.43px 0;
             display: flex;
             justify-content: center;
             align-items: center;
+            text-decoration: none;
+            color: #ffffff;
+            transition: transform 0.2s, filter 0.2s;
         }
 
-        /* Using simple text placeholders; replace with SVG or image assets later */
-        .icon-instagram::before { content: 'I'; }
-        .icon-tiktok::before { content: 'T'; }
-        .icon-website::before { content: 'W'; }
-        .icon-email::before { content: '✉️'; }
+        .hex-anchor::before, .hex-anchor::after {
+            content: "";
+            position: absolute;
+            width: 35.36px;
+            height: 35.36px;
+            transform: scaleY(0.5774) rotate(-45deg);
+            background-color: transparent;
+            left: 5.3px; 
+            z-index: 1;
+        }
+
+        .hex-anchor::before {
+            top: -17.68px;
+            border-top: 2px solid #ffcc00;
+            border-right: 2px solid #ffcc00;
+        }
+
+        .hex-anchor::after {
+            bottom: -17.68px;
+            border-bottom: 2px solid #ffcc00;
+            border-left: 2px solid #ffcc00;
+        }
+
+        .hex-inner-symbol {
+            font-size: 18px;
+            z-index: 5;
+            position: relative;
+            line-height: 1;
+        }
+
+        /* Styling fix to make the X character perfectly upright and clean */
+        .symbol-x {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .hex-anchor:active {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px #ffcc00);
+        }
 
         .latency-footer {
             font-size: 9px;
@@ -295,8 +324,8 @@
 <body>
 
     <div class="umbrella-bar">
-        <div class="umbrella-brand">MELD Umbrella System</div>
-        </div>
+        <a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a>
+    </div>
 
     <div class="brand-container">
         <div class="logo">MYROC</div>
@@ -364,17 +393,17 @@
 
     <div class="footer-network">
         <div class="social-row">
-            <a href="https://instagram.com/meldliveapp" class="social-icon-link" target="_blank">
-                <div class="icon icon-instagram"></div>
+            <a href="https://instagram.com/meldliveapp" class="hex-anchor" target="_blank">
+                <span class="hex-inner-symbol">📷</span>
             </a>
-            <a href="https://tiktok.com/@meldlive" class="social-icon-link" target="_blank">
-                <div class="icon icon-tiktok"></div>
+            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
+                <span class="hex-inner-symbol">🎵</span>
             </a>
-            <a href="https://meldliveapp.com" class="social-icon-link" target="_blank">
-                <div class="icon icon-website"></div>
+            <a href="https://x.com" class="hex-anchor" target="_blank">
+                <span class="hex-inner-symbol symbol-x">X</span>
             </a>
-            <a href="mailto:meldliveapp@gmail.com" class="social-icon-link">
-                <div class="icon icon-email"></div>
+            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
+                <span class="hex-inner-symbol">✉️</span>
             </a>
         </div>
         <div class="latency-footer">
@@ -400,7 +429,7 @@
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
                     analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 64; // Bin size for spread visualization
+                    analyser.fftSize = 64;
                     source.connect(analyser);
                     const bufferLength = analyser.frequencyBinCount;
                     dataArray = new Uint8Array(bufferLength);
@@ -425,10 +454,7 @@
             animationFrameId = requestAnimationFrame(updateVisualizer);
             analyser.getByteFrequencyData(dataArray);
             
-            // Map the frequency bins across our expanded bar set
             for (let i = 0; i < barElements.length; i++) {
-                // Read frequency data from a corresponding bin, scale it cleanly
-                // We space the visual data reading across the frequency spectrum
                 let binIndex = Math.floor(i * (dataArray.length / barElements.length));
                 let value = dataArray[binIndex] || 0;
                 let percentHeight = (value / 255) * 85; 
@@ -459,12 +485,10 @@
             }
         }
 
-        document.cookie = "Cross-Site-Cookie=MeldNetworkNode; SameSite=None; Secure";
-
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
-            alert(`Searching MyRoc servers pairing your ${inst} with a ${target}...`);
+            alert(`Searching MYROC servers pairing your ${inst} with a ${target}...`);
         }
     </script>
 </body>
