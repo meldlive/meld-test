@@ -85,16 +85,19 @@
             letter-spacing: 1px;
             font-weight: 700;
             background: none;
-            border: none;
+            border: 1px solid rgba(0, 229, 255, 0.3);
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 20px;
             transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .mic-toggle-link.active {
-            color: #555555;
-            pointer-events: none; /* Disables clicking once active */
+            color: #00e5ff;
+            background: rgba(0, 229, 255, 0.1);
+            border-color: #00e5ff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
         }
 
         /* 3. CONFIGURATION CARD */
@@ -229,10 +232,13 @@
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
+            <div class="visualizer-container">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
             <div class="eq-bar"></div>
         </div>
-        <button class="mic-toggle-link" id="micBtn" onclick="initAudioVisualizer()">Test Instrument Input</button>
+        <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
     </div>
 
     <div class="setup-card">
@@ -294,40 +300,61 @@
 
     <script>
         let videoStream = null;
+        let audioStream = null;
         let audioContext = null;
         let analyser = null;
         let dataArray = null;
+        let animationFrameId = null;
         const barElements = document.querySelectorAll('.eq-bar');
 
-        async function initAudioVisualizer() {
+        async function toggleMicFeed() {
             const micBtn = document.getElementById('micBtn');
-            try {
-                // permission requested ONLY when they click this button now
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+            if (!audioStream) {
+                try {
+                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(audioStream);
+                    
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 32;
+                    
+                    source.connect(analyser);
+                    
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    
+                    micBtn.innerText = "Mute Input";
+                    micBtn.classList.add('active');
+                    
+                    updateVisualizer();
+                } catch (err) {
+                    alert("Microphone permission was denied.");
+                }
+            } else {
+                // Kill the mic stream completely
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
                 
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioContext.createMediaStreamSource(stream);
+                // Cancel visualizer rendering loop
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
                 
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 32;
+                // Drop equalizer bars cleanly to flat state
+                for (let i = 0; i < barElements.length; i++) {
+                    barElements[i].style.height = '4px';
+                }
                 
-                source.connect(analyser);
-                
-                const bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-                
-                micBtn.innerText = "Signal Active";
-                micBtn.classList.add('active');
-                
-                updateVisualizer();
-            } catch (err) {
-                alert("Microphone permission was denied.");
+                micBtn.innerText = "Test Instrument Input";
+                micBtn.classList.remove('active');
             }
         }
 
         function updateVisualizer() {
             if (!analyser) return;
-            requestAnimationFrame(updateVisualizer);
+            animationFrameId = requestAnimationFrame(updateVisualizer);
             
             analyser.getByteFrequencyData(dataArray);
             
