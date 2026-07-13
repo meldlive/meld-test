@@ -16,25 +16,26 @@
         body {
             background-color: #000000;
             color: #ffffff;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 40px 24px;
-            overflow: hidden;
+            padding: 30px 20px;
+            overflow-x: hidden;
         }
 
         /* 1. BRANDING */
         .brand-container {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 10px;
+            width: 100%;
         }
 
         .logo {
-            font-size: 36px;
+            font-size: 42px;
             font-weight: 900;
-            letter-spacing: 6px;
+            letter-spacing: 8px;
             color: #ffffff;
         }
 
@@ -42,107 +43,77 @@
             font-size: 11px;
             color: #555555;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 6px;
-            font-weight: 600;
-        }
-
-        /* 2. EQUALIZER / VISUALIZATION CONTAINER */
-        .visualizer-container {
-            width: 100%;
-            max-width: 320px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            margin: 30px 0;
-        }
-
-        /* High-fidelity Neon Equalizer Bars */
-        .eq-bar {
-            width: 6px;
-            height: 15px;
-            background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
-            border-radius: 3px;
-            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
-            animation: bounce 0.8s ease-in-out infinite alternate;
-        }
-
-        /* Varied animation delays to simulate live instrument strumming */
-        .eq-1  { height: 35px; animation-delay: 0.1s; }
-        .eq-2  { height: 55px; animation-delay: 0.4s; }
-        .eq-3  { height: 20px; animation-delay: 0.2s; }
-        .eq-4  { height: 65px; animation-delay: 0.6s; }
-        .eq-5  { height: 40px; animation-delay: 0.3s; }
-        .eq-6  { height: 75px; animation-delay: 0.5s; }
-        .eq-7  { height: 30px; animation-delay: 0.1s; }
-        .eq-8  { height: 50px; animation-delay: 0.7s; }
-        .eq-9  { height: 25px; animation-delay: 0.2s; }
-
-        @keyframes bounce {
-            0% { transform: scaleY(0.3); opacity: 0.6; }
-            100% { transform: scaleY(1.1); opacity: 1; }
-        }
-
-        /* 3. HARDWARE CONFIGURATION CARD */
-        .setup-card {
-            width: 100%;
-            max-width: 340px;
-            background: #090909;
-            border: 1px solid #141414;
-            padding: 24px;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #666666;
-            margin-bottom: 8px;
+            letter-spacing: 3px;
+            margin-top: 8px;
             font-weight: 700;
         }
 
-        .input-group select {
+        /* 2. ENLARGED EQUALIZER VISUALIZER */
+        .visualizer-container {
             width: 100%;
-            background: #111111;
-            border: 1px solid #1c1c1c;
-            color: #ffffff;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            transition: border 0.2s;
+            max-width: 360px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin: 20px 0;
         }
 
-        .input-group select:focus {
-            border-color: #00e5ff;
+        .eq-bar {
+            width: 7px;
+            height: 15px;
+            background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
+            border-radius: 4px;
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
+            animation: bounce 0.8s ease-in-out infinite alternate;
         }
 
-        /* CAMERA BLOCK PREVIEW AREA */
+        .eq-1  { height: 40px; animation-delay: 0.1s; }
+        .eq-2  { height: 65px; animation-delay: 0.4s; }
+        .eq-3  { height: 25px; animation-delay: 0.2s; }
+        .eq-4  { height: 80px; animation-delay: 0.6s; }
+        .eq-5  { height: 45px; animation-delay: 0.3s; }
+        .eq-6  { height: 90px; animation-delay: 0.5s; }
+        .eq-7  { height: 35px; animation-delay: 0.1s; }
+        .eq-8  { height: 60px; animation-delay: 0.7s; }
+        .eq-9  { height: 30px; animation-delay: 0.2s; }
+
+        @keyframes bounce {
+            0% { transform: scaleY(0.25); opacity: 0.5; }
+            100% { transform: scaleY(1.15); opacity: 1; }
+        }
+
+        /* 3. FULL-SCREEN EXPANDED CONFIGURATION CARD */
+        .setup-card {
+            width: 100%;
+            max-width: 440px; /* Expanded capacity width */
+            background: #070707;
+            border: 1px solid #121212;
+            padding: 28px 24px;
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        /* ENLARGED CAMERA PREVIEW BOX */
         .camera-preview-box {
             width: 100%;
-            height: 120px;
-            background-color: #111111;
+            height: 160px; /* Increased visual area */
+            background-color: #0c0c0c;
             border: 1px dashed #222222;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
         .camera-preview-box video {
@@ -153,11 +124,11 @@
         }
 
         .video-toggle-btn {
-            background: #161616;
-            border: 1px solid #262626;
-            color: #888888;
-            padding: 8px 16px;
-            border-radius: 20px;
+            background: #141414;
+            border: 1px solid #222222;
+            color: #aaaaaa;
+            padding: 10px 20px;
+            border-radius: 24px;
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
@@ -165,42 +136,83 @@
             cursor: pointer;
             z-index: 2;
             transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
         .video-toggle-btn.active {
             background: rgba(0, 229, 255, 0.1);
             border-color: #00e5ff;
             color: #00e5ff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
         }
 
-        /* 4. JAM NOW TRIGGER BUTTON */
+        /* STRETCHED SELECT DRAG FIELDS */
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666666;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .input-group select {
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            color: #ffffff;
+            padding: 18px 16px; /* Ultra comfortable tap size */
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: all 0.2s;
+        }
+
+        .input-group select:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        }
+
+        /* MASSIVE ACTION TRIGGER BUTTON */
         .jam-btn {
             width: 100%;
             background: #ffffff;
             color: #000000;
             border: none;
-            padding: 16px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 800;
+            padding: 20px; /* Big click vector */
+            border-radius: 35px;
+            font-size: 15px;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+            margin-top: 10px;
+            transition: transform 0.1s, box-shadow 0.2s, background-color 0.2s;
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.15);
         }
 
         .jam-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
             background: #00e5ff;
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.6);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.7);
         }
 
         .latency-footer {
-            font-size: 11px;
-            color: #444444;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 10px;
+            color: #333333;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -233,19 +245,47 @@
         <div class="input-group">
             <label for="instrument">What You're Playing</label>
             <select id="instrument">
-                <option value="guitar">🎸 Electric Guitar / Bass</option>
-                <option value="vocals">🎤 Lead Vocals / Mic</option>
-                <option value="keys">🎹 Synthesizer / MIDI Keys</option>
-                <option value="drums">🥁 Electronic Drums</option>
+                <optgroup label="Strings">
+                    <option value="Electric Guitar">🎸 Electric Guitar</option>
+                    <option value="Acoustic Guitar">🎸 Acoustic Guitar</option>
+                    <option value="Bass Guitar">🎸 Bass Guitar</option>
+                </optgroup>
+                <optgroup label="Vocals">
+                    <option value="Lead Vocals">🎤 Lead Vocals</option>
+                    <option value="Backing Vocals">🎙️ Backing Vocals / Mic</option>
+                </optgroup>
+                <optgroup label="Keys & Synths">
+                    <option value="Keyboard / Piano">🎹 Keyboard / Piano</option>
+                    <option value="Synthesizer">🎛️ Synthesizer / Midi</option>
+                </optgroup>
+                <optgroup label="Percussion">
+                    <option value="Electronic Drums">🥁 Electronic Drums</option>
+                    <option value="Acoustic Drums">🥁 Acoustic Drums</option>
+                    <option value="Percussion Pad">🎵 Percussion / Sample Pad</option>
+                </optgroup>
             </select>
         </div>
 
         <div class="input-group">
-            <label for="search">What You're Searching For</label>
+            <label for="search">Who You're Looking For</label>
             <select id="search">
-                <option value="jam">⚡ Open Jam Spaces (Live)</option>
-                <option value="collab">🎼 1-on-1 Session Tracking</option>
-                <option value="produce">🎛️ Production & Mixing Rooms</option>
+                <optgroup label="Strings Needed">
+                    <option value="Electric Guitarist">🎸 Electric Guitarist</option>
+                    <option value="Acoustic Guitarist">🎸 Acoustic Guitarist</option>
+                    <option value="Bass Player">🎸 Bassist</option>
+                </optgroup>
+                <optgroup label="Vocals Needed">
+                    <option value="Vocalist">🎤 Vocalist / Singer</option>
+                </optgroup>
+                <optgroup label="Keys Needed">
+                    <option value="Keyboardist">🎹 Keyboardist / Synth Player</option>
+                </optgroup>
+                <optgroup label="Percussion Needed">
+                    <option value="Drummer">🥁 Drummer / Beatmaker</option>
+                </optgroup>
+                <optgroup label="Production">
+                    <option value="Audio Engineer">🎚️ Producer / Mixing Engineer</option>
+                </optgroup>
             </select>
         </div>
 
@@ -284,8 +324,8 @@
 
         function enterJam() {
             const inst = document.getElementById('instrument').value;
-            const search = document.getElementById('search').value;
-            alert(`Connecting your ${inst} to an optimized ${search} environment...`);
+            const target = document.getElementById('search').value;
+            alert(`Searching for an optimized room matching a ${inst} with a ${target}...`);
         }
     </script>
 </body>
