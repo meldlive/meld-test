@@ -331,7 +331,7 @@
             line-height: 1;
         }
 
-        /* STATUS BASELINE */
+        /* STATUS BASELINE WITH GLOW EFFECT */
         .latency-footer {
             font-size: 8px;
             color: #222222;
@@ -341,12 +341,32 @@
             margin-top: 4px;
             text-align: center;
             width: 100%;
+            transition: color 0.3s ease;
         }
 
-        /* GLOWING PULSE ANIMATION FOR ACTIVE CONNECTION STATE */
+        /* GLOWING PULSE ANIMATIONS */
         @keyframes pulse {
             0% { transform: scale(0.92); opacity: 0.6; }
             100% { transform: scale(1.08); opacity: 1; }
+        }
+
+        /* NEW FOR STEP 3: Peer simulated dancing EQ bars animation */
+        @keyframes peerEQ {
+            0% { height: 2px; }
+            50% { height: 16px; }
+            100% { height: 4px; }
+        }
+        @keyframes peerEQ-alt {
+            0% { height: 6px; }
+            50% { height: 3px; }
+            100% { height: 14px; }
+        }
+
+        .peer-eq-bar {
+            width: 2px;
+            background: #00e5ff;
+            border-radius: 1px;
+            box-shadow: 0 0 6px rgba(0, 229, 255, 0.4);
         }
     </style>
 </head>
@@ -363,20 +383,32 @@
 
     <div class="setup-card">
         
+        <!-- Video Box wrapper setup to split screen instantly -->
         <div class="camera-preview-box" style="display: flex;">
             
+            <!-- Left Half: Local webcam -->
             <div id="local-video-container" style="width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: width 0.3s ease;">
                 <video id="webcam" autoplay playsinline muted></video>
                 <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Click to Turn Video On</button>
             </div>
 
+            <!-- Right Half: Incoming peer stream placeholder (sliding in on connect) -->
             <div id="peer-video-container" style="display: none; width: 50%; height: 100%; border-left: 1px solid #121212; position: relative; background: #080808; flex-direction: column; justify-content: center; align-items: center; transition: all 0.3s ease;">
                 <div id="peer-avatar" style="font-size: 28px; filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4)); animation: pulse 1.5s infinite alternate;">🥁</div>
                 <span id="peer-label" style="font-size: 8px; color: #00e5ff; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; font-weight: 700;">Matched Peer</span>
+                
+                <!-- NEW FOR STEP 3: Mini Simulated EQ for matched peer -->
+                <div style="display: flex; gap: 2px; height: 18px; align-items: flex-end; margin-top: 6px;">
+                    <div class="peer-eq-bar" style="animation: peerEQ 0.4s infinite ease alternate;"></div>
+                    <div class="peer-eq-bar" style="animation: peerEQ-alt 0.5s infinite ease alternate 0.1s;"></div>
+                    <div class="peer-eq-bar" style="animation: peerEQ 0.3s infinite ease alternate 0.2s;"></div>
+                    <div class="peer-eq-bar" style="animation: peerEQ-alt 0.6s infinite ease alternate 0.05s;"></div>
+                </div>
             </div>
 
         </div>
 
+        <!-- Equalizer stays active and responsive to instrument feed -->
         <div class="visualizer-area">
             <div class="visualizer-container" id="eqContainer">
                 <script>
@@ -391,6 +423,7 @@
             <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
         </div>
 
+        <!-- Group wrapper for dropdown inputs so we can hide them cleanly -->
         <div id="setup-inputs">
             <div class="input-group">
                 <label for="instrument">What You're Plugging In</label>
@@ -417,6 +450,7 @@
             <button class="jam-btn" onclick="enterJam()">Jam Now</button>
         </div>
 
+        <!-- Active Jam Room status card built inside the main container -->
         <div id="jam-room-display" style="display: none; flex-direction: column; align-items: center; padding: 10px 0; gap: 12px; margin-top: 5px;">
             <h2 style="font-size: 18px; color: #00e5ff; text-transform: uppercase; letter-spacing: 2px;">Jam Room</h2>
             <p id="jam-status" style="font-size: 10px; color: #888888; text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.4;"></p>
@@ -440,7 +474,8 @@
                 <i class="fa-regular fa-envelope hex-inner-symbol"></i>
             </a>
         </div>
-        <div class="latency-footer">
+        <!-- UPDATED FOR STEP 3: Added id="latency-val" so JS can control the stats text -->
+        <div class="latency-footer" id="latency-val">
             Server Status: Operational (0ms)
         </div>
     </div>
@@ -453,7 +488,7 @@
         let dataArray = null;
         let animationFrameId = null;
         let barElements = [];
-        let matchTimeout = null; // Track matchmaking timer
+        let matchTimeout = null; 
 
         async function toggleMicFeed() {
             const micBtn = document.getElementById('micBtn');
@@ -525,6 +560,7 @@
         function enterJam() {
             const inst = document.getElementById('instrument').value;
             const target = document.getElementById('search').value;
+            const latencyFooter = document.getElementById('latency-val');
             
             // Hide selection dropdowns and the initial jam button
             document.getElementById('setup-inputs').style.display = 'none';
@@ -532,6 +568,10 @@
             // Phase A: Display "Searching" phase
             document.getElementById('jam-status').innerText = `Searching MYROC servers for a ${target}...`;
             document.getElementById('jam-status').style.color = '#888888';
+            
+            // Update latency footer style to show routing is active
+            latencyFooter.innerText = "Routing P2P audio streams...";
+            latencyFooter.style.color = '#888888';
             
             // Reveal active Jam Room space
             const jamDisplay = document.getElementById('jam-room-display');
@@ -545,7 +585,11 @@
             matchTimeout = setTimeout(() => {
                 // Phase B: Transition status to Active Connect
                 document.getElementById('jam-status').innerText = `CONNECTED! Jamming with a ${target}`;
-                document.getElementById('jam-status').style.color = '#00e5ff'; // highlight cyan
+                document.getElementById('jam-status').style.color = '#00e5ff'; 
+
+                // Dynamic Latency Update: Show high-performance P2P ping status!
+                latencyFooter.innerText = "P2P Connection: Active (12ms Latency)";
+                latencyFooter.style.color = '#00e5ff';
 
                 // Split screen - slide local video left
                 document.getElementById('local-video-container').style.width = '50%';
@@ -568,7 +612,6 @@
 
         // Returns seamlessly back to setup screen
         function leaveJam() {
-            // Safe clear matchmaking timer if aborted early
             if (matchTimeout) clearTimeout(matchTimeout);
 
             // Hide the active Jam Room controls
@@ -580,6 +623,11 @@
             // Collapse screen split back to 100% full local view
             document.getElementById('local-video-container').style.width = '100%';
             document.getElementById('peer-video-container').style.display = 'none';
+
+            // Reset latency footer back to default idle state
+            const latencyFooter = document.getElementById('latency-val');
+            latencyFooter.innerText = "Server Status: Operational (0ms)";
+            latencyFooter.style.color = '#222222';
         }
     </script>
 </body>
