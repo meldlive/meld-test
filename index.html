@@ -17,13 +17,13 @@
         body {
             background-color: #000000;
             color: #ffffff;
-            height: 100vh; /* Enforces absolute fixed screen heights */
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            overflow: hidden; /* Hard cut to kill any scrolling */
-            padding-bottom: 10px;
+            overflow: hidden; /* Strict viewport layout enforcement */
+            padding-bottom: 5px;
         }
 
         /* 1. TOP HEADER LINK */
@@ -35,6 +35,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .umbrella-link {
@@ -51,49 +52,57 @@
             color: #00e5ff;
         }
 
-        /* 2. PREMIUM TYPOGRAPHY BRANDING */
+        /* 2. REFINED MINIMALIST BRANDING */
         .brand-container {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 5px; /* Shaved completely down */
             width: 100%;
+            flex-shrink: 0;
         }
 
         .logo {
-            font-size: 38px;
+            font-size: 36px;
             font-weight: 900;
-            letter-spacing: 8px; /* High-end horizontal tracking */
+            letter-spacing: 8px;
             background: linear-gradient(180deg, #ffffff 0%, #888888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
         }
 
-        .tagline {
-            font-size: 10px;
-            color: #444444;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            margin-top: 4px;
-            font-weight: 700;
+        /* 3. CONSOLE INTERACTIVE CARD CONTROL INTERFACE */
+        .setup-card {
+            width: 90%;
+            max-width: 400px;
+            background: #060606;
+            border: 1px solid #121212;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+            max-height: 62vh; /* Expanded control card bounds slightly since it houses visualizer */
         }
 
-        /* 3. COMPACT FULL SCREEN EQUALIZER */
+        /* EQUALIZER RE-ROUTED INSIDE THE CARD CORE */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 6px;
+            margin-bottom: 16px;
             width: 100%;
+            flex-shrink: 0;
         }
 
         .visualizer-container {
             width: 100%;
-            height: 60px; /* Shaved down vertical stack size */
+            height: 40px; /* Perfectly low-profile inside console card */
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 4px;
         }
 
         .eq-bar {
@@ -107,7 +116,7 @@
         }
 
         .mic-toggle-link {
-            font-size: 10px;
+            font-size: 9px;
             color: #00e5ff;
             text-decoration: none;
             text-transform: uppercase;
@@ -116,7 +125,7 @@
             background: none;
             border: 1px solid rgba(0, 229, 255, 0.3);
             cursor: pointer;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             transition: all 0.2s;
         }
@@ -126,27 +135,13 @@
             border-color: #00e5ff;
         }
 
-        /* 4. COMPACT CONFIGURATION CARD */
-        .setup-card {
-            width: 90%;
-            max-width: 400px;
-            background: #060606;
-            border: 1px solid #121212;
-            padding: 20px; /* Reduced breathing room to tighten layout */
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
         .camera-preview-box {
             width: 100%;
-            height: 130px; /* Shaved down visual layout box height */
+            height: 100px; /* Sleek dimension balance */
             background-color: #0a0a0a;
             border: 1px dashed #222222;
             border-radius: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -165,9 +160,9 @@
             background: #111111;
             border: 1px solid #222222;
             color: #888888;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -182,16 +177,16 @@
         }
 
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .input-group label {
             display: block;
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #555555;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 700;
         }
 
@@ -200,7 +195,7 @@
             background: #0a0a0a;
             border: 1px solid #161616;
             color: #ffffff;
-            padding: 14px;
+            padding: 12px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -214,14 +209,14 @@
             background: #000000;
             color: #00e5ff;
             border: 2px solid #00e5ff;
-            padding: 16px;
+            padding: 14px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            margin-top: 4px;
+            margin-top: 2px;
             transition: all 0.2s ease;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
         }
@@ -233,17 +228,18 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* 5. TIGHTENED HEXAGON FOOTER */
+        /* 4. HIGH-FI BLUE NEON FOOTER LAYER */
         .footer-network {
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             border-top: 1px solid #111111;
-            padding-top: 15px;
-            margin-top: 10px;
+            padding-top: 10px;
+            margin-top: 5px;
+            flex-shrink: 0;
         }
 
         .social-row {
@@ -255,12 +251,12 @@
 
         .hex-anchor {
             position: relative;
-            width: 44px; /* Scaled hexagons down slightly */
-            height: 25.4px;
+            width: 38px;
+            height: 21.94px;
             background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
-            margin: 12.7px 0;
+            margin: 10.97px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -272,28 +268,28 @@
         .hex-anchor::before, .hex-anchor::after {
             content: "";
             position: absolute;
-            width: 31.11px;
-            height: 31.11px;
+            width: 26.87px;
+            height: 26.87px;
             transform: scaleY(0.5774) rotate(-45deg);
             background-color: transparent;
-            left: 4.4px; 
+            left: 3.8px; 
             z-index: 1;
         }
 
         .hex-anchor::before {
-            top: -15.56px;
+            top: -13.44px;
             border-top: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
         }
 
         .hex-anchor::after {
-            bottom: -15.56px;
+            bottom: -13.44px;
             border-bottom: 2px solid #00e5ff;
             border-left: 2px solid #00e5ff;
         }
 
         .hex-inner-symbol {
-            font-size: 14px;
+            font-size: 12px;
             z-index: 5;
             position: relative;
             line-height: 1;
@@ -316,24 +312,24 @@
 
     <div class="brand-container">
         <div class="logo">MYROC</div>
-        <div class="tagline">High-Fidelity Audio Collaboration Engine</div>
-    </div>
-
-    <div class="visualizer-area">
-        <div class="visualizer-container" id="eqContainer">
-            <script>
-                const container = document.getElementById('eqContainer');
-                for (let i = 0; i < 60; i++) {
-                    const bar = document.createElement('div');
-                    bar.className = 'eq-bar';
-                    container.appendChild(bar);
-                }
-            </script>
-        </div>
-        <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
     </div>
 
     <div class="setup-card">
+        
+        <div class="visualizer-area">
+            <div class="visualizer-container" id="eqContainer">
+                <script>
+                    const container = document.getElementById('eqContainer');
+                    for (let i = 0; i < 60; i++) {
+                        const bar = document.createElement('div');
+                        bar.className = 'eq-bar';
+                        container.appendChild(bar);
+                    }
+                </script>
+            </div>
+            <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
+        </div>
+
         <div class="camera-preview-box">
             <video id="webcam" autoplay playsinline muted></video>
             <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Video Off</button>
@@ -431,7 +427,7 @@
             for (let i = 0; i < barElements.length; i++) {
                 let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
                 let value = dataArray[binIndex] || 0;
-                let percentHeight = (value / 255) * 55; // Tuned height limit for tighter layout space
+                let percentHeight = (value / 255) * 35; 
                 barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
             }
         }
