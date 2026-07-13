@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MELD | Space</title>
+    <title>MELD | Setup</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,177 +14,279 @@
         }
 
         body {
-            background-color: #0a0a0a;
+            background-color: #000000;
             color: #ffffff;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 24px;
             overflow: hidden;
         }
 
-        /* MOBILE HEADER */
-        .mobile-header {
-            width: 100%;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #161616;
-            background-color: #0a0a0a;
-            z-index: 10;
+        /* 1. BRANDING */
+        .brand-container {
+            text-align: center;
+            margin-top: 20px;
         }
 
         .logo {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 2px;
-        }
-
-        .latency-badge {
-            font-size: 12px;
-            color: #00e5ff;
-            background-color: rgba(0, 229, 255, 0.1);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-
-        /* MAIN LIVE STAGE */
-        .stage-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-        }
-
-        .space-title {
-            position: absolute;
-            top: 30px;
-            font-size: 15px;
-            color: #888888;
-            letter-spacing: 0.5px;
-        }
-
-        .waveform-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 40px;
-        }
-
-        /* Pulsating Neon Waveform Animation */
-        .waveform-circle {
-            width: 160px;
-            height: 160px;
-            border: 2px solid #00e5ff;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
-            animation: pulse 1.6s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.96); box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
-            50% { transform: scale(1.04); box-shadow: 0 0 45px rgba(0, 229, 255, 0.5); }
-            100% { transform: scale(0.96); box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
-        }
-
-        .inner-dot {
-            width: 24px;
-            height: 24px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-
-        /* STATUS FOOTER */
-        .status-mic {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #666666;
-            margin-bottom: 25px;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #00e5ff;
-            border-radius: 50%;
-            box-shadow: 0 0 6px #00e5ff;
-        }
-
-        /* FLOATING ACTION BAR */
-        .action-bar {
-            width: calc(100% - 40px);
-            max-width: 340px;
-            background-color: #121212;
-            border: 1px solid #1f1f1f;
-            padding: 16px;
-            border-radius: 40px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 6px;
             color: #ffffff;
-            cursor: pointer;
-            font-size: 14px;
+        }
+
+        .tagline {
+            font-size: 11px;
+            color: #555555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 6px;
             font-weight: 600;
-            padding: 8px 12px;
         }
 
-        .action-btn.leave {
-            color: #ff3b30;
+        /* 2. EQUALIZER / VISUALIZATION CONTAINER */
+        .visualizer-container {
+            width: 100%;
+            max-width: 320px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 30px 0;
         }
 
-        /* Desktop Layout Override */
-        @media (min-width: 768px) {
-            body { flex-direction: row; }
-            .mobile-header { width: 240px; height: 100vh; flex-direction: column; border-right: 1px solid #161616; border-bottom: none; justify-content: flex-start; gap: 40px; }
-            .action-bar { margin-bottom: 50px; }
+        /* High-fidelity Neon Equalizer Bars */
+        .eq-bar {
+            width: 6px;
+            height: 15px;
+            background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
+            border-radius: 3px;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+            animation: bounce 0.8s ease-in-out infinite alternate;
+        }
+
+        /* Varied animation delays to simulate live instrument strumming */
+        .eq-1  { height: 35px; animation-delay: 0.1s; }
+        .eq-2  { height: 55px; animation-delay: 0.4s; }
+        .eq-3  { height: 20px; animation-delay: 0.2s; }
+        .eq-4  { height: 65px; animation-delay: 0.6s; }
+        .eq-5  { height: 40px; animation-delay: 0.3s; }
+        .eq-6  { height: 75px; animation-delay: 0.5s; }
+        .eq-7  { height: 30px; animation-delay: 0.1s; }
+        .eq-8  { height: 50px; animation-delay: 0.7s; }
+        .eq-9  { height: 25px; animation-delay: 0.2s; }
+
+        @keyframes bounce {
+            0% { transform: scaleY(0.3); opacity: 0.6; }
+            100% { transform: scaleY(1.1); opacity: 1; }
+        }
+
+        /* 3. HARDWARE CONFIGURATION CARD */
+        .setup-card {
+            width: 100%;
+            max-width: 340px;
+            background: #090909;
+            border: 1px solid #141414;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666666;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .input-group select {
+            width: 100%;
+            background: #111111;
+            border: 1px solid #1c1c1c;
+            color: #ffffff;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: border 0.2s;
+        }
+
+        .input-group select:focus {
+            border-color: #00e5ff;
+        }
+
+        /* CAMERA BLOCK PREVIEW AREA */
+        .camera-preview-box {
+            width: 100%;
+            height: 120px;
+            background-color: #111111;
+            border: 1px dashed #222222;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-preview-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .video-toggle-btn {
+            background: #161616;
+            border: 1px solid #262626;
+            color: #888888;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            z-index: 2;
+            transition: all 0.2s;
+        }
+
+        .video-toggle-btn.active {
+            background: rgba(0, 229, 255, 0.1);
+            border-color: #00e5ff;
+            color: #00e5ff;
+        }
+
+        /* 4. JAM NOW TRIGGER BUTTON */
+        .jam-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .jam-btn:active {
+            transform: scale(0.98);
+            background: #00e5ff;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.6);
+        }
+
+        .latency-footer {
+            font-size: 11px;
+            color: #444444;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
 
-    <header class="mobile-header">
+    <div class="brand-container">
         <div class="logo">MELD</div>
-        <div class="latency-badge">0ms latency</div>
-    </header>
+        <div class="tagline">High-Fidelity Collaboration Portal</div>
+    </div>
 
-    <main class="stage-container">
-        <div class="space-title">Active Space: Alpha Room</div>
+    <div class="visualizer-container">
+        <div class="eq-bar eq-1"></div>
+        <div class="eq-bar eq-2"></div>
+        <div class="eq-bar eq-3"></div>
+        <div class="eq-bar eq-4"></div>
+        <div class="eq-bar eq-5"></div>
+        <div class="eq-bar eq-6"></div>
+        <div class="eq-bar eq-7"></div>
+        <div class="eq-bar eq-8"></div>
+        <div class="eq-bar eq-9"></div>
+    </div>
 
-        <div class="waveform-container">
-            <div class="waveform-circle">
-                <div class="inner-dot"></div>
-            </div>
+    <div class="setup-card">
+        
+        <div class="camera-preview-box">
+            <video id="webcam" autoplay playsinline muted></video>
+            <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Video Off</button>
         </div>
 
-        <div class="status-mic">
-            <div class="status-dot"></div>
-            <span>Studio Mic Connected</span>
+        <div class="input-group">
+            <label for="instrument">What You're Playing</label>
+            <select id="instrument">
+                <option value="guitar">🎸 Electric Guitar / Bass</option>
+                <option value="vocals">🎤 Lead Vocals / Mic</option>
+                <option value="keys">🎹 Synthesizer / MIDI Keys</option>
+                <option value="drums">🥁 Electronic Drums</option>
+            </select>
         </div>
 
-        <div class="action-bar">
-            <button class="action-btn">Mute</button>
-            <button class="action-btn">Invite</button>
-            <button class="action-btn leave">Leave</button>
+        <div class="input-group">
+            <label for="search">What You're Searching For</label>
+            <select id="search">
+                <option value="jam">⚡ Open Jam Spaces (Live)</option>
+                <option value="collab">🎼 1-on-1 Session Tracking</option>
+                <option value="produce">🎛️ Production & Mixing Rooms</option>
+            </select>
         </div>
-    </main>
 
+        <button class="jam-btn" onclick="enterJam()">Jam Now</button>
+    </div>
+
+    <div class="latency-footer">
+        OPTIMIZED AUDIO ENGINES ACTIVE • 0MS LATENCY
+    </div>
+
+    <script>
+        let videoStream = null;
+
+        async function toggleCam() {
+            const btn = document.getElementById('camBtn');
+            const video = document.getElementById('webcam');
+
+            if (!videoStream) {
+                try {
+                    videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = videoStream;
+                    video.style.display = 'block';
+                    btn.innerText = "Video On";
+                    btn.classList.add('active');
+                } catch (err) {
+                    alert("Unable to access camera.");
+                }
+            } else {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+                video.style.display = 'none';
+                btn.innerText = "Video Off";
+                btn.classList.remove('active');
+            }
+        }
+
+        function enterJam() {
+            const inst = document.getElementById('instrument').value;
+            const search = document.getElementById('search').value;
+            alert(`Connecting your ${inst} to an optimized ${search} environment...`);
+        }
+    </script>
 </body>
 </html>
