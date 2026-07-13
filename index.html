@@ -20,7 +20,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Switch to top-packed alignment to control gaps */
+            justify-content: flex-start;
             align-items: center;
             overflow: hidden; /* Strict viewport layout protection */
             padding-bottom: 10px;
@@ -55,7 +55,7 @@
         /* 2. BRANDING HEADLINE GROUP */
         .brand-container {
             text-align: center;
-            margin-top: 6px;
+            margin-top: 5px;
             width: 100%;
             flex-shrink: 0;
         }
@@ -86,25 +86,25 @@
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 14px 16px;
+            padding: 12px 16px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             flex-shrink: 0;
-            margin-top: 10px;
-            margin-bottom: 12px; /* Controlled explicit gap below the box */
+            margin-top: 8px;
+            margin-bottom: 10px;
         }
 
-        /* CAMERA MODULE PREVIEW */
+        /* VIDEO MODULE PREVIEW - SET TO 150px */
         .camera-preview-box {
             width: 100%;
-            height: 125px; 
+            height: 150px; 
             background-color: #0a0a0a;
             border: 1px dashed #222222;
             border-radius: 14px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -140,20 +140,20 @@
             color: #00e5ff;
         }
 
-        /* AUDIO VISUALIZER MODULE */
+        /* AUDIO VISUALIZER MODULE - SET TO 50px */
         .visualizer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             width: 100%;
             flex-shrink: 0;
         }
 
         .visualizer-container {
             width: 100%;
-            height: 35px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -191,7 +191,7 @@
 
         /* DROPDOWN OPTIONS */
         .input-group {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             flex-shrink: 0;
         }
 
@@ -210,7 +210,7 @@
             background: #0a0a0a;
             border: 1px solid #161616;
             color: #ffffff;
-            padding: 12px;
+            padding: 10px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -225,7 +225,7 @@
             background: #000000;
             color: #00e5ff;
             border: 2px solid #00e5ff;
-            padding: 14px;
+            padding: 12px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 900;
@@ -238,246 +238,3 @@
         }
 
         .jam-btn:active {
-            transform: scale(0.98);
-            background: #00e5ff;
-            color: #000000;
-            box-shadow: 0 0 25px #00e5ff;
-        }
-
-        /* 4. PACKED FOOTER ROW PLACED DIRECTLY BELOW THE CONSOLE CARD BOX */
-        .footer-network {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            flex-shrink: 0;
-        }
-
-        .social-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .hex-anchor {
-            position: relative;
-            width: 34px; 
-            height: 19.63px;
-            background-color: transparent;
-            border-left: 2px solid #00e5ff;
-            border-right: 2px solid #00e5ff;
-            margin: 4px 0; /* Shrunken margins to snap layout together cleanly */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            color: #ffffff;
-            transition: transform 0.2s;
-        }
-
-        .hex-anchor::before, .hex-anchor::after {
-            content: "";
-            position: absolute;
-            width: 24.04px;
-            height: 24.04px;
-            transform: scaleY(0.5774) rotate(-45deg);
-            background-color: transparent;
-            left: 3.4px; 
-            z-index: 1;
-        }
-
-        .hex-anchor::before {
-            top: -12.02px;
-            border-top: 2px solid #00e5ff;
-            border-right: 2px solid #00e5ff;
-        }
-
-        .hex-anchor::after {
-            bottom: -12.02px;
-            border-bottom: 2px solid #00e5ff;
-            border-left: 2px solid #00e5ff;
-        }
-
-        .hex-inner-symbol {
-            font-size: 11px;
-            z-index: 5;
-            position: relative;
-            line-height: 1;
-        }
-
-        /* STATUS BASELINE */
-        .latency-footer {
-            font-size: 8px;
-            color: #222222;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 2px;
-            text-align: center;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="umbrella-bar">
-        <a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a>
-    </div>
-
-    <div class="brand-container">
-        <div class="logo">MYROC</div>
-        <div class="tagline">Audio Collaboration Engine</div>
-    </div>
-
-    <div class="setup-card">
-        
-        <div class="camera-preview-box">
-            <video id="webcam" autoplay playsinline muted></video>
-            <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Video Off</button>
-        </div>
-
-        <div class="visualizer-area">
-            <div class="visualizer-container" id="eqContainer">
-                <script>
-                    const container = document.getElementById('eqContainer');
-                    for (let i = 0; i < 60; i++) {
-                        const bar = document.createElement('div');
-                        bar.className = 'eq-bar';
-                        container.appendChild(bar);
-                    }
-                </script>
-            </div>
-            <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
-        </div>
-
-        <div class="input-group">
-            <label for="instrument">What You're Plugging In</label>
-            <select id="instrument">
-                <option value="Electric Guitar">🎸 Electric Guitar</option>
-                <option value="Bass Guitar">🎸 Bass Guitar</option>
-                <option value="Electronic Drums">🥁 Electronic Drums</option>
-                <option value="Piano / Keyboard">🎹 Digital Piano / Keyboard</option>
-                <option value="Electric Violin">🎻 Electric Violin</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label for="search">Who You're Looking For</label>
-            <select id="search">
-                <option value="Electric Guitarist">🎸 Electric Guitarist</option>
-                <option value="Bass Player">🎸 Bassist</option>
-                <option value="Drummer">🥁 Drummer</option>
-                <option value="Keyboardist">🎹 Keyboardist</option>
-                <option value="Violinist">🎻 Violinist</option>
-            </select>
-        </div>
-
-        <button class="jam-btn" onclick="enterJam()">Jam Now</button>
-    </div>
-
-    <div class="footer-network">
-        <div class="social-row">
-            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-instagram hex-inner-symbol"></i>
-            </a>
-            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
-            </a>
-            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
-            </a>
-            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
-                <i class="fa-regular fa-envelope hex-inner-symbol"></i>
-            </a>
-        </div>
-        <div class="latency-footer">
-            Server Status: Operational (0ms)
-        </div>
-    </div>
-
-    <script>
-        let videoStream = null;
-        let audioStream = null;
-        let audioContext = null;
-        let analyser = null;
-        let dataArray = null;
-        let animationFrameId = null;
-        let barElements = [];
-
-        async function toggleMicFeed() {
-            const micBtn = document.getElementById('micBtn');
-            barElements = document.querySelectorAll('.eq-bar');
-
-            if (!audioStream) {
-                try {
-                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const source = audioContext.createMediaStreamSource(audioStream);
-                    analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 256;
-                    source.connect(analyser);
-                    const bufferLength = analyser.frequencyBinCount;
-                    dataArray = new Uint8Array(bufferLength);
-                    micBtn.innerText = "Mute Input";
-                    micBtn.classList.add('active');
-                    updateVisualizer();
-                } catch (err) {
-                    alert("Input microphone permission was denied.");
-                }
-            } else {
-                audioStream.getTracks().forEach(track => track.stop());
-                audioStream = null;
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                for (let i = 0; i < barElements.length; i++) barElements[i].style.height = '2px';
-                micBtn.innerText = "Test Instrument Input";
-                micBtn.classList.remove('active');
-            }
-        }
-
-        function updateVisualizer() {
-            if (!analyser) return;
-            animationFrameId = requestAnimationFrame(updateVisualizer);
-            analyser.getByteFrequencyData(dataArray);
-            
-            for (let i = 0; i < barElements.length; i++) {
-                let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
-                let value = dataArray[binIndex] || 0;
-                let percentHeight = (value / 255) * 35; 
-                barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
-            }
-        }
-
-        async function toggleCam() {
-            const btn = document.getElementById('camBtn');
-            const video = document.getElementById('webcam');
-
-            if (!videoStream) {
-                try {
-                    videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = videoStream;
-                    video.style.display = 'block';
-                    btn.innerText = "Video On";
-                    btn.classList.add('active');
-                } catch (err) {
-                    alert("Camera capture permission was denied.");
-                }
-            } else {
-                videoStream.getTracks().forEach(track => track.stop());
-                videoStream = null;
-                video.style.display = 'none';
-                btn.innerText = "Video Off";
-                btn.classList.remove('active');
-            }
-        }
-
-        function enterJam() {
-            const inst = document.getElementById('instrument').value;
-            const target = document.getElementById('search').value;
-            alert(`Searching MYROC servers pairing your ${inst} with a ${target}...`);
-        }
-    </script>
-</body>
-</html>
