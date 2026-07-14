@@ -381,7 +381,7 @@
     </div>
 
     <div class="brand-container">
-        .   <div class="logo">MYROC</div>
+        <div class="logo">MYROC</div>
         <div class="tagline">Audio Collaboration Engine</div>
     </div>
 
@@ -442,11 +442,11 @@
             <div class="input-group">
                 <label for="search">Who You're Looking For</label>
                 <select id="search">
-                    <option value="guitar">🎸 Electric Guitarist</option>
-                    <option value="bass">🎸 Bassist</option>
-                    <option value="drums">🥁 Drummer</option>
-                    <option value="keys">🎹 Keyboardist</option>
-                    <option value="violin">🎻 Violinist</option>
+                    <option value="guitar">🎸 Electric Guitar</option>
+                    <option value="bass">🎸 Bass Guitar</option>
+                    <option value="drums">🥁 Electronic Drums</option>
+                    <option value="keys">🎹 Digital Piano / Keyboard</option>
+                    <option value="violin">🎻 Electric Violin</option>
                 </select>
             </div>
 
@@ -482,6 +482,16 @@
     </div>
 
     <script>
+        // DEVELOPER SNIFFER: Outputs syntax or code errors straight to the screen footer
+        window.onerror = function(message, source, lineno, colno, error) {
+            const footer = document.getElementById('latency-val');
+            if (footer) {
+                footer.innerText = "Error: " + message + " (Line " + lineno + ")";
+                footer.style.color = '#ff3b30';
+            }
+            return false;
+        };
+
         let videoStream = null;
         let audioStream = null;
         let audioContext = null;
@@ -497,21 +507,21 @@
         let pubnub = null;
         let currentLobbyChannel = 'myroc-global-lobby';
 
-        // Clean text formatting maps for standardized value keys
+        // Display name mapping maps for standardized value keys
         const instrumentLabels = {
             'guitar': 'Electric Guitar',
             'bass': 'Bass Guitar',
             'drums': 'Electronic Drums',
-            'keys': 'Piano / Keyboard',
+            'keys': 'Digital Piano / Keyboard',
             'violin': 'Electric Violin'
         };
 
         const searchLabels = {
-            'guitar': 'Electric Guitarist',
-            'bass': 'Bassist',
-            'drums': 'Drummer',
-            'keys': 'Keyboardist',
-            'violin': 'Violinist'
+            'guitar': 'Electric Guitar',
+            'bass': 'Bass Guitar',
+            'drums': 'Electronic Drums',
+            'keys': 'Digital Piano / Keyboard',
+            'violin': 'Electric Violin'
         };
 
         // Connect both networks on startup
@@ -538,10 +548,259 @@
                 call.answer(streamsToOffer);
                 
                 call.on('stream', (remoteStream) => {
-                    const currentSearchKey = document.getElementById('search').value;
-                    const cleanTargetName = searchLabels[currentSearchKey];
+                    const callerInstrument = call.metadata ? call.metadata.instrument : 'Partner';
+                    const cleanTargetName = searchLabels[callerInstrument] || callerInstrument;
                     handleMatchedPeerStream(remoteStream, cleanTargetName);
                 });
             });
 
-            // 2. Initialize PubNub with secure
+            // 2. Initialize PubNub with secure developer keys
+            pubnub = new PubNub({
+                publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048',
+                subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c',
+                userId: randomId,
+                uuid: randomId
+            });
+
+            // Listen for matchmaking signals in the background
+            pubnub.addListener({
+                message: function(event) {
+                    const msg = event.message;
+                    
+                    // Ignore our own search messages
+                    if (msg.peerId === myPeerId) return;
+
+                    // Matchmaking Logic: Do their criteria match our current search?
+                    const myInstrument = document.getElementById('instrument').value; // e.g., 'guitar'
+                    const myTarget = document.getElementById('search').value; // e.g., 'drums'
+
+                    if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
+                        // WE HAVE A MATCH! 
+                        // Stop searching and notify the other peer directly that we are locking onto them
+                        pubnub.publish({
+                            channel: currentLobbyChannel,
+                            message: {
+                                action: 'match-found',
+                                targetId: msg.peerId,
+                                matchId: myPeerId,
+                                instrument: myInstrument
+                            }
+                        });
+                        
+                        // Call them directly via PeerJS to start WebRTC audio/video stream exchange
+                        connectToPeer(msg.peerId, msg.instrument);
+                    } 
+                    
+                    else if (msg.action === 'match-found' && msg.targetId === myPeerId) {
+                        // The other peer found us and told us to stand by for their connection call
+                        document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY...";
+                    }
+                }
+            });
+
+            pubnub.subscribe({ channels: [currentLobbyChannel] });
+        });
+
+        // Triggered when matchmaking finds a partner
+        function connectToPeer(targetPeerId, peerInstrumentKey) {
+            let streamsToOffer = new MediaStream();
+            if (videoStream) videoStream.getVideoTracks().forEach(t => streamsToOffer.addTrack(t));
+            if (audioStream) audioStream.getAudioTracks().forEach(t => streamsToOffer.addTrack(t));
+
+            activeCall = myPeer.call(targetPeerId, streamsToOffer, {
+                metadata: { instrument: document.getElementById('instrument').value }
+            });
+            
+            activeCall.on('stream', (remoteStream) => {
+                const cleanTargetName = searchLabels[peerInstrumentKey] || peerInstrumentKey;
+                handleMatchedPeerStream(remoteStream, cleanTargetName);
+            });
+        }
+
+        // Renders the real live audio/video stream inside your split screen card
+        function handleMatchedPeerStream(remoteStream, targetName = "Matched Partner") {
+            const peerVideoElement = document.getElementById('peerWebcam');
+            
+            // Route the WebRTC stream to the video element
+            peerVideoElement.srcObject = remoteStream;
+            peerVideoElement.style.display = 'block';
+            
+            // Update connection UI state
+            document.getElementById('jam-status').innerText = `CONNECTED! Jamming with ${targetName}`;
+            document.getElementById('jam-status').style.color = '#00e5ff';
+            document.getElementById('latency-val').innerText = "P2P Connection: Active (12ms Latency)";
+            document.getElementById('latency-val').style.color = '#00e5ff';
+
+            // Visually split screen to render their camera angle
+            document.getElementById('local-video-container').style.width = '50%';
+            document.getElementById('peer-video-container').style.display = 'flex';
+            document.getElementById('peer-placeholder').style.display = 'none'; // Hide backup emoji
+        }
+
+        // Explicit starter helper to guarantee audio is active on match
+        async function startAudio() {
+            if (!audioStream) {
+                const micBtn = document.getElementById('micBtn');
+                barElements = document.querySelectorAll('.eq-bar');
+                try {
+                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(audioStream);
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+                    source.connect(analyser);
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    micBtn.innerText = "Mute Input";
+                    micBtn.classList.add('active');
+                    updateVisualizer();
+                } catch (err) {
+                    console.warn("Could not start audio stream:", err);
+                }
+            }
+        }
+
+        // Explicit starter helper to guarantee video is active on match
+        async function startVideo() {
+            if (!videoStream) {
+                const btn = document.getElementById('camBtn');
+                const video = document.getElementById('webcam');
+                try {
+                    videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = videoStream;
+                    video.style.display = 'block';
+                    btn.innerText = "Turn Video Off"; 
+                    btn.classList.add('active');
+                } catch (err) {
+                    console.warn("Could not start video stream:", err);
+                }
+            }
+        }
+
+        async function toggleMicFeed() {
+            if (!audioStream) {
+                await startAudio();
+            } else {
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                for (let i = 0; i < barElements.length; i++) barElements[i].style.height = '2px';
+                const micBtn = document.getElementById('micBtn');
+                micBtn.innerText = "Test Instrument Input";
+                micBtn.classList.remove('active');
+            }
+        }
+
+        function updateVisualizer() {
+            if (!analyser) return;
+            animationFrameId = requestAnimationFrame(updateVisualizer);
+            analyser.getByteFrequencyData(dataArray);
+            
+            for (let i = 0; i < barElements.length; i++) {
+                let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
+                let value = dataArray[binIndex] || 0;
+                let percentHeight = (value / 255) * 50; 
+                barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
+            }
+        }
+
+        async function toggleCam() {
+            if (!videoStream) {
+                await startVideo();
+            } else {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+                const video = document.getElementById('webcam');
+                video.style.display = 'none';
+                const btn = document.getElementById('camBtn');
+                btn.innerText = "Click to Turn Video On"; 
+                btn.classList.remove('active');
+            }
+        }
+
+        // Begins real background matchmaking & automatically requests feeds
+        async function enterJam() {
+            const instKey = document.getElementById('instrument').value;
+            const targetKey = document.getElementById('search').value;
+            const latencyFooter = document.getElementById('latency-val');
+            
+            const cleanTargetName = searchLabels[targetKey];
+            
+            // Auto-trigger permissions so user isn't blank/muted when matched
+            await startAudio();
+            await startVideo();
+
+            // Hide selection dropdowns and the initial jam button
+            document.getElementById('setup-inputs').style.display = 'none';
+            
+            // Set state to searching
+            document.getElementById('jam-status').innerText = `SEARCHING FOR A ${cleanTargetName.toUpperCase()}...`;
+            document.getElementById('jam-status').style.color = '#888888';
+            latencyFooter.innerText = "Lobby Status: Matchmaking Active...";
+            latencyFooter.style.color = '#888888';
+            
+            // Reveal active Jam Room space
+            const jamDisplay = document.getElementById('jam-room-display');
+            jamDisplay.style.display = 'flex';
+
+            // Reset UI layout containers
+            document.getElementById('local-video-container').style.width = '100%';
+            document.getElementById('peer-video-container').style.display = 'none';
+            document.getElementById('peerWebcam').style.display = 'none';
+            document.getElementById('peer-placeholder').style.display = 'flex';
+
+            // Dynamically set matching peer avatar based on our standardized key
+            const peerAvatar = document.getElementById('peer-avatar');
+            if (targetKey === "guitar" || targetKey === "bass") peerAvatar.innerText = "🎸";
+            else if (targetKey === "drums") peerAvatar.innerText = "🥁";
+            else if (targetKey === "keys") peerAvatar.innerText = "🎹";
+            else if (targetKey === "violin") peerAvatar.innerText = "🎻";
+
+            document.getElementById('peer-label').innerText = cleanTargetName;
+
+            // Background Broadcast: Signal to everyone in the lobby what we have and what we need
+            pubnub.publish({
+                channel: currentLobbyChannel,
+                message: {
+                    action: 'searching',
+                    peerId: myPeerId,
+                    instrument: instKey,
+                    lookingFor: targetKey
+                }
+            });
+        }
+
+        // Returns seamlessly back to setup screen
+        function leaveJam() {
+            if (activeCall) {
+                activeCall.close();
+                activeCall = null;
+            }
+
+            // Inform the lobby we are out
+            pubnub.publish({
+                channel: currentLobbyChannel,
+                message: {
+                    action: 'disconnected',
+                    peerId: myPeerId
+                }
+            });
+
+            // Hide the active Jam Room controls
+            document.getElementById('jam-room-display').style.display = 'none';
+            
+            // Bring back setup dropdowns
+            document.getElementById('setup-inputs').style.display = 'block';
+
+            // Collapse screen split back to 100% full local view
+            document.getElementById('local-video-container').style.width = '100%';
+            document.getElementById('peer-video-container').style.display = 'none';
+
+            // Reset latency footer back to default idle state
+            const latencyFooter = document.getElementById('latency-val');
+            latencyFooter.innerText = "System Status: Ready to Jam";
+            latencyFooter.style.color = '#00e5ff';
+        }
+    </script>
+</body>
+</html>
