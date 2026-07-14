@@ -6,8 +6,7 @@
     <title>MYROC | Powered by MELD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js"></script>
-    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pubnub/7.2.2/pubnub.min.js"></script>
     
     <style>
         * {
@@ -26,7 +25,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow: hidden; /* Strict viewport layout protection */
+            overflow: hidden; /* Viewport layout lock */
             padding-bottom: 10px;
         }
 
@@ -482,7 +481,7 @@
     </div>
 
     <script>
-        // DEVELOPER SNIFFER: Outputs syntax or code errors straight to the screen footer
+        // ERROR SNIFFER: Keeps app from silently crashing on mobile browsers
         window.onerror = function(message, source, lineno, colno, error) {
             const footer = document.getElementById('latency-val');
             if (footer) {
@@ -500,14 +499,23 @@
         let animationFrameId = null;
         let barElements = [];
 
-        // PeerJS & Matchmaking variables
-        let myPeer = null;
-        let myPeerId = null;
-        let activeCall = null;
+        // Peer Connection & PubNub Handshake variables (PeerJS fully removed!)
+        let myId = null;
+        let peerConnection = null;
         let pubnub = null;
         let currentLobbyChannel = 'myroc-global-lobby';
+        let searchInterval = null;
+        let targetPeerId = null;
 
-        // Display name mapping maps for standardized value keys
+        // Global STUN configuration to punch through 3G/4G/5G mobile firewalls
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        };
+
         const instrumentLabels = {
             'guitar': 'Electric Guitar',
             'bass': 'Bass Guitar',
@@ -524,120 +532,227 @@
             'violin': 'Electric Violin'
         };
 
-        // Connect both networks on startup
+        // Initialize pure database connection on start
         window.addEventListener('DOMContentLoaded', () => {
-            // 1. Initialize PeerJS with a clean unique ID
-            const randomId = 'MYROC-' + Math.floor(1000 + Math.random() * 9000);
-            myPeer = new Peer(randomId);
+            if (typeof PubNub === 'undefined') {
+                const footer = document.getElementById('latency-val');
+                footer.innerText = "Error: Matchmaker SDK Blocked. Disable AdBlock/Content Filter.";
+                footer.style.color = '#ff3b30';
+                return;
+            }
 
-            myPeer.on('open', (id) => {
-                myPeerId = id;
+            // Generate clean random local ID
+            myId = 'MYROC-' + Math.floor(1000 + Math.random() * 9000);
+
+            try {
+                // Initialize private PubNub connection
+                pubnub = new PubNub({
+                    publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048',
+                    subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c',
+                    userId: myId
+                });
+
+                // Background handshake processor (Handles the entire WebRTC call flow silently)
+                pubnub.addListener({
+                    message: function(event) {
+                        const msg = event.message;
+                        
+                        // Ignore our own signals
+                        if (msg.senderId === myId || msg.peerId === myId) return;
+
+                        const myInstrument = document.getElementById('instrument').value;
+                        const myTarget = document.getElementById('search').value;
+
+                        // Phase A: Searching handshake
+                        if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
+                            // Lexicographical master resolution to prevent double SDP signaling loops
+                            if (myId < msg.peerId) {
+                                targetPeerId = msg.peerId;
+                                if (searchInterval) {
+                                    clearInterval(searchInterval);
+                                    searchInterval = null;
+                                }
+                                initiateWebRTCCall(targetPeerId);
+                            } else {
+                                targetPeerId = msg.peerId;
+                                if (searchInterval) {
+                                    clearInterval(searchInterval);
+                                    searchInterval = null;
+                                }
+                                document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY...";
+                            }
+                        }
+
+                        // Phase B: Incoming Offer (Callee receiver)
+                        else if (msg.action === 'sdp-offer' && msg.targetId === myId) {
+                            handleSDPOffer(msg);
+                        }
+
+                        // Phase C: Incoming Answer (Caller initiator)
+                        else if (msg.action === 'sdp-answer' && msg.targetId === myId) {
+                            handleSDPAnswer(msg);
+                        }
+
+                        // Phase D: ICE Candidate routing
+                        else if (msg.action === 'ice-candidate' && msg.targetId === myId) {
+                            handleICECandidate(msg);
+                        }
+
+                        // Phase E: Disconnect request
+                        else if (msg.action === 'disconnected' && msg.peerId === targetPeerId) {
+                            leaveJam();
+                        }
+                    }
+                });
+
+                pubnub.subscribe({ channels: [currentLobbyChannel] });
+
                 document.getElementById('latency-val').innerText = "System Status: Ready to Jam";
                 document.getElementById('latency-val').style.color = '#00e5ff';
-            });
 
-            // Handle incoming WebRTC audio/video call automatically
-            myPeer.on('call', (call) => {
-                activeCall = call;
-                
-                // Construct a local media stream containing whatever feeds the user has turned on
-                let streamsToOffer = new MediaStream();
-                if (videoStream) videoStream.getVideoTracks().forEach(t => streamsToOffer.addTrack(t));
-                if (audioStream) audioStream.getAudioTracks().forEach(t => streamsToOffer.addTrack(t));
-                
-                call.answer(streamsToOffer);
-                
-                call.on('stream', (remoteStream) => {
-                    const callerInstrument = call.metadata ? call.metadata.instrument : 'Partner';
-                    const cleanTargetName = searchLabels[callerInstrument] || callerInstrument;
-                    handleMatchedPeerStream(remoteStream, cleanTargetName);
-                });
-            });
-
-            // 2. Initialize PubNub with secure developer keys
-            pubnub = new PubNub({
-                publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048',
-                subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c',
-                userId: randomId,
-                uuid: randomId
-            });
-
-            // Listen for matchmaking signals in the background
-            pubnub.addListener({
-                message: function(event) {
-                    const msg = event.message;
-                    
-                    // Ignore our own search messages
-                    if (msg.peerId === myPeerId) return;
-
-                    // Matchmaking Logic: Do their criteria match our current search?
-                    const myInstrument = document.getElementById('instrument').value; // e.g., 'guitar'
-                    const myTarget = document.getElementById('search').value; // e.g., 'drums'
-
-                    if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
-                        // WE HAVE A MATCH! 
-                        // Stop searching and notify the other peer directly that we are locking onto them
-                        pubnub.publish({
-                            channel: currentLobbyChannel,
-                            message: {
-                                action: 'match-found',
-                                targetId: msg.peerId,
-                                matchId: myPeerId,
-                                instrument: myInstrument
-                            }
-                        });
-                        
-                        // Call them directly via PeerJS to start WebRTC audio/video stream exchange
-                        connectToPeer(msg.peerId, msg.instrument);
-                    } 
-                    
-                    else if (msg.action === 'match-found' && msg.targetId === myPeerId) {
-                        // The other peer found us and told us to stand by for their connection call
-                        document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY...";
-                    }
-                }
-            });
-
-            pubnub.subscribe({ channels: [currentLobbyChannel] });
+            } catch (err) {
+                console.error("Lobby initial setup crashed: ", err);
+            }
         });
 
-        // Triggered when matchmaking finds a partner
-        function connectToPeer(targetPeerId, peerInstrumentKey) {
-            let streamsToOffer = new MediaStream();
-            if (videoStream) videoStream.getVideoTracks().forEach(t => streamsToOffer.addTrack(t));
-            if (audioStream) audioStream.getAudioTracks().forEach(t => streamsToOffer.addTrack(t));
-
-            activeCall = myPeer.call(targetPeerId, streamsToOffer, {
-                metadata: { instrument: document.getElementById('instrument').value }
-            });
-            
-            activeCall.on('stream', (remoteStream) => {
-                const cleanTargetName = searchLabels[peerInstrumentKey] || peerInstrumentKey;
-                handleMatchedPeerStream(remoteStream, cleanTargetName);
-            });
+        // Combined AV stream helper
+        function getLocalStream() {
+            const combinedStream = new MediaStream();
+            if (videoStream) videoStream.getVideoTracks().forEach(t => combinedStream.addTrack(t));
+            if (audioStream) audioStream.getAudioTracks().forEach(t => combinedStream.addTrack(t));
+            return combinedStream;
         }
 
-        // Renders the real live audio/video stream inside your split screen card
+        // Clean WebRTC Connection Constructor
+        function createPeerConnection() {
+            if (peerConnection) return;
+
+            peerConnection = new RTCPeerConnection(rtcConfig);
+
+            // Bind local tracks directly to connection
+            const localFeed = getLocalStream();
+            localFeed.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localFeed);
+            });
+
+            // Handshake candidate router
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate && targetPeerId && pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'ice-candidate',
+                            targetId: targetPeerId,
+                            senderId: myId,
+                            candidate: event.candidate
+                        }
+                    });
+                }
+            };
+
+            // Stream Receiver: Catches incoming WebRTC feed and locks into split container
+            peerConnection.ontrack = (event) => {
+                const currentSearchKey = document.getElementById('search').value;
+                const cleanTargetName = searchLabels[currentSearchKey];
+                handleMatchedPeerStream(event.streams[0], cleanTargetName);
+            };
+        }
+
+        // WebRTC Caller Flow (Initiated by the lexicographical leader)
+        async function initiateWebRTCCall(targetId) {
+            document.getElementById('jam-status').innerText = "INITIATING LIVE CONNECTION...";
+            createPeerConnection();
+
+            try {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+
+                const myInstrument = document.getElementById('instrument').value;
+                if (pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'sdp-offer',
+                            targetId: targetId,
+                            senderId: myId,
+                            offer: offer,
+                            instrument: myInstrument
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("SDP Offer creation failed: ", err);
+            }
+        }
+
+        // WebRTC Callee Flow (Receives offer, answers back)
+        async function handleSDPOffer(msg) {
+            targetPeerId = msg.senderId;
+            createPeerConnection();
+
+            try {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.offer));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+
+                if (pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'sdp-answer',
+                            targetId: targetPeerId,
+                            senderId: myId,
+                            answer: answer
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Setting remote offer crashed: ", err);
+            }
+        }
+
+        async function handleSDPAnswer(msg) {
+            try {
+                if (peerConnection) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.answer));
+                }
+            } catch (err) {
+                console.error("Setting remote answer crashed: ", err);
+            }
+        }
+
+        async function handleICECandidate(msg) {
+            if (peerConnection && msg.candidate) {
+                try {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate));
+                } catch (err) {
+                    console.error("Applying ICE Candidate failed: ", err);
+                }
+            }
+        }
+
+        // Split screen and route live connection
         function handleMatchedPeerStream(remoteStream, targetName = "Matched Partner") {
+            if (searchInterval) {
+                clearInterval(searchInterval);
+                searchInterval = null;
+            }
+
             const peerVideoElement = document.getElementById('peerWebcam');
-            
-            // Route the WebRTC stream to the video element
             peerVideoElement.srcObject = remoteStream;
             peerVideoElement.style.display = 'block';
             
-            // Update connection UI state
             document.getElementById('jam-status').innerText = `CONNECTED! Jamming with ${targetName}`;
             document.getElementById('jam-status').style.color = '#00e5ff';
             document.getElementById('latency-val').innerText = "P2P Connection: Active (12ms Latency)";
             document.getElementById('latency-val').style.color = '#00e5ff';
 
-            // Visually split screen to render their camera angle
             document.getElementById('local-video-container').style.width = '50%';
             document.getElementById('peer-video-container').style.display = 'flex';
-            document.getElementById('peer-placeholder').style.display = 'none'; // Hide backup emoji
+            document.getElementById('peer-placeholder').style.display = 'none';
         }
 
-        // Explicit starter helper to guarantee audio is active on match
+        // Guaranteed audio permission gatherer
         async function startAudio() {
             if (!audioStream) {
                 const micBtn = document.getElementById('micBtn');
@@ -655,12 +770,12 @@
                     micBtn.classList.add('active');
                     updateVisualizer();
                 } catch (err) {
-                    console.warn("Could not start audio stream:", err);
+                    console.warn("Audio mic access was denied:", err);
                 }
             }
         }
 
-        // Explicit starter helper to guarantee video is active on match
+        // Guaranteed video permission gatherer
         async function startVideo() {
             if (!videoStream) {
                 const btn = document.getElementById('camBtn');
@@ -672,7 +787,7 @@
                     btn.innerText = "Turn Video Off"; 
                     btn.classList.add('active');
                 } catch (err) {
-                    console.warn("Could not start video stream:", err);
+                    console.warn("Camera video access was denied:", err);
                 }
             }
         }
@@ -718,7 +833,7 @@
             }
         }
 
-        // Begins real background matchmaking & automatically requests feeds
+        // Begins matchmaking with a 2-second heartbeat loop
         async function enterJam() {
             const instKey = document.getElementById('instrument').value;
             const targetKey = document.getElementById('search').value;
@@ -726,30 +841,25 @@
             
             const cleanTargetName = searchLabels[targetKey];
             
-            // Auto-trigger permissions so user isn't blank/muted when matched
+            // Trigger local inputs first
             await startAudio();
             await startVideo();
 
-            // Hide selection dropdowns and the initial jam button
             document.getElementById('setup-inputs').style.display = 'none';
             
-            // Set state to searching
             document.getElementById('jam-status').innerText = `SEARCHING FOR A ${cleanTargetName.toUpperCase()}...`;
             document.getElementById('jam-status').style.color = '#888888';
             latencyFooter.innerText = "Lobby Status: Matchmaking Active...";
             latencyFooter.style.color = '#888888';
             
-            // Reveal active Jam Room space
             const jamDisplay = document.getElementById('jam-room-display');
             jamDisplay.style.display = 'flex';
 
-            // Reset UI layout containers
             document.getElementById('local-video-container').style.width = '100%';
             document.getElementById('peer-video-container').style.display = 'none';
             document.getElementById('peerWebcam').style.display = 'none';
             document.getElementById('peer-placeholder').style.display = 'flex';
 
-            // Dynamically set matching peer avatar based on our standardized key
             const peerAvatar = document.getElementById('peer-avatar');
             if (targetKey === "guitar" || targetKey === "bass") peerAvatar.innerText = "🎸";
             else if (targetKey === "drums") peerAvatar.innerText = "🥁";
@@ -758,45 +868,56 @@
 
             document.getElementById('peer-label').innerText = cleanTargetName;
 
-            // Background Broadcast: Signal to everyone in the lobby what we have and what we need
-            pubnub.publish({
-                channel: currentLobbyChannel,
-                message: {
-                    action: 'searching',
-                    peerId: myPeerId,
-                    instrument: instKey,
-                    lookingFor: targetKey
+            const sendSearchBroadcast = () => {
+                if (pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'searching',
+                            peerId: myId,
+                            instrument: instKey,
+                            lookingFor: targetKey
+                        }
+                    });
                 }
-            });
+            };
+
+            sendSearchBroadcast();
+            if (searchInterval) clearInterval(searchInterval);
+            searchInterval = setInterval(sendSearchBroadcast, 2000);
         }
 
-        // Returns seamlessly back to setup screen
+        // Safely disconnects and tears down WebRTC
         function leaveJam() {
-            if (activeCall) {
-                activeCall.close();
-                activeCall = null;
+            if (searchInterval) {
+                clearInterval(searchInterval);
+                searchInterval = null;
             }
 
-            // Inform the lobby we are out
-            pubnub.publish({
-                channel: currentLobbyChannel,
-                message: {
-                    action: 'disconnected',
-                    peerId: myPeerId
-                }
-            });
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            targetPeerId = null;
 
-            // Hide the active Jam Room controls
+            if (pubnub) {
+                pubnub.publish({
+                    channel: currentLobbyChannel,
+                    message: {
+                        action: 'disconnected',
+                        peerId: myId
+                    }
+                });
+            }
+
             document.getElementById('jam-room-display').style.display = 'none';
-            
-            // Bring back setup dropdowns
             document.getElementById('setup-inputs').style.display = 'block';
 
-            // Collapse screen split back to 100% full local view
             document.getElementById('local-video-container').style.width = '100%';
             document.getElementById('peer-video-container').style.display = 'none';
+            document.getElementById('peerWebcam').style.display = 'none';
+            document.getElementById('peer-placeholder').style.display = 'flex';
 
-            // Reset latency footer back to default idle state
             const latencyFooter = document.getElementById('latency-val');
             latencyFooter.innerText = "System Status: Ready to Jam";
             latencyFooter.style.color = '#00e5ff';
