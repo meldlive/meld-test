@@ -38,13 +38,10 @@
         .footer-network { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 5px; flex-shrink: 0; }
         .social-row { display: flex; justify-content: center; align-items: center; gap: 16px; }
         .hex-anchor { position: relative; width: 34px; height: 19.63px; border-left: 2px solid #00e5ff; border-right: 2px solid #00e5ff; margin: 4px 0; display: flex; justify-content: center; align-items: center; text-decoration: none; color: #ffffff; }
-        .hex-inner-symbol { font-size: 11px; z-index: 5; position: relative; }
-        .latency-footer { font-size: 8px; color: #222222; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; text-align: center; width: 100%; }
-        @keyframes pulse { 0% { transform: scale(0.92); opacity: 0.6; } 100% { transform: scale(1.08); opacity: 1; } }
-        .peer-eq-bar { width: 2px; background: #00e5ff; border-radius: 1px; box-shadow: 0 0 6px rgba(0, 229, 255, 0.4); }
+        .peer-eq-bar { width: 2px; background: #00e5ff; border-radius: 1px; }
     </style>
 </head>
-<body oncontextmenu="return false;"> 
+<body>
     <div class="umbrella-bar">
         <a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a>
     </div>
@@ -56,13 +53,12 @@
 
     <div class="setup-card" id="password-gate-card">
         <h3 class="gate-title">Enter Access Key</h3>
-        <input type="password" class="gate-input" id="portal-password" placeholder="••••••••" onkeydown="handleGateKeyPress(event)">
-        <div class="gate-error-msg" id="gate-error">Access Denied. Invalid Beta Key.</div>
+        <input type="password" class="gate-input" id="portal-password" placeholder="••••••••">
+        <div class="gate-error-msg" id="gate-error">Access Denied.</div>
         <button class="jam-btn" onclick="verifyBetaPassword()">Unlock Portal</button>
         <div class="signup-section">
             <p class="signup-text">Don't have a key? Sign up for Beta access below:</p>
             <form action="https://formspree.io/f/mzdnbnen" method="POST">
-                <input type="hidden" name="_next" value="https://meldlive.github.io" />
                 <input type="email" name="email" class="gate-input" placeholder="ENTER YOUR EMAIL" required style="font-size: 12px; margin-bottom: 10px;">
                 <button type="submit" class="jam-btn" style="border-color: #555555; color: #ffffff; padding: 8px; font-size: 10px;">SUBMIT REQUEST</button>
             </form>
@@ -71,19 +67,12 @@
 
     <div class="setup-card" id="app-portal-card" style="display: none; padding: 12px 16px;">
         <div class="camera-preview-box">
-            <div class="bandwidth-shield" id="bw-warning-shield">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <h4>Bandwidth Warning</h4>
-            </div>
-            <div id="local-video-container" style="width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: width 0.3s ease;">
+            <div id="local-video-container" style="width: 100%; height: 100%; display: flex; align-items: center;">
                 <video id="webcam" autoplay playsinline muted></video>
                 <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Click to Turn Video On</button>
             </div>
-            <div id="peer-video-container" style="display: none; width: 50%; height: 100%; border-left: 1px solid #121212; position: relative; background: #080808; flex-direction: column; justify-content: center; align-items: center; transition: all 0.3s ease;">
-                <video id="peerWebcam" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1;"></video>
-                <div id="peer-placeholder" style="z-index: 2; display: flex; flex-direction: column; align-items: center;">
-                    <div style="font-size: 28px; animation: pulse 1.5s infinite alternate;">🥁</div>
-                </div>
+            <div id="peer-video-container" style="display: none; width: 50%; height: 100%; border-left: 1px solid #121212;">
+                <video id="peerWebcam" autoplay playsinline style="width: 100%; height: 100%;"></video>
             </div>
         </div>
         <div class="visualizer-area">
@@ -100,87 +89,84 @@
             <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
         </div>
         <div id="setup-inputs">
-            <div class="input-group">
-                <label>What You're Plugging In</label>
-                <select id="instrument">
-                    <option value="guitar">🎸 Electric Guitar</option>
-                    <option value="bass">🎸 Bass Guitar</option>
-                    <option value="drums">🥁 Electronic Drums</option>
-                    <option value="keys">🎹 Digital Piano / Keyboard</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Who You're Looking For</label>
-                <select id="search">
-                    <option value="guitar">🎸 Electric Guitar</option>
-                    <option value="bass">🎸 Bass Guitar</option>
-                    <option value="drums">🥁 Electronic Drums</option>
-                    <option value="keys">🎹 Digital Piano / Keyboard</option>
-                </select>
-            </div>
+            <select id="instrument"><option value="guitar">🎸 Electric Guitar</option></select>
+            <select id="search"><option value="guitar">🎸 Electric Guitar</option></select>
             <button class="jam-btn" onclick="enterJam()">Jam Now</button>
         </div>
-        <div id="jam-room-display" style="display: none; flex-direction: column; align-items: center; padding: 10px 0;">
-            <h2 style="font-size: 18px; color: #00e5ff; text-transform: uppercase; letter-spacing: 2px;">Jam Room</h2>
-            <p id="jam-status" style="font-size: 10px; color: #888888; text-transform: uppercase; letter-spacing: 1px; text-align: center;"></p>
-            <button class="jam-btn" style="border-color: #ff3b30; color: #ff3b30; margin-top: 10px;" onclick="leaveJam()">Disconnect</button>
+        <div id="jam-room-display" style="display: none; flex-direction: column; align-items: center;">
+            <p id="jam-status">Jam Room</p>
+            <button class="jam-btn" onclick="leaveJam()">Disconnect</button>
         </div>
     </div>
 
     <script>
-        let videoStream = null; let audioStream = null; let audioContext = null; let analyser = null; 
-        let myId = null; let peerConnection = null; let pubnub = null; let currentLobbyChannel = 'myroc-global-lobby'; let searchInterval = null; let targetPeerId = null;
+        let videoStream = null, audioStream = null, audioContext = null, analyser = null, myId = null, peerConnection = null, pubnub = null, searchInterval = null;
 
         function verifyBetaPassword() {
             if (document.getElementById('portal-password').value.trim().toLowerCase() === "meldjam") {
                 document.getElementById('password-gate-card').style.display = 'none';
                 document.getElementById('app-portal-card').style.display = 'block';
                 initializePubNub();
-            } else { alert("Access Denied"); }
+            } else { document.getElementById('gate-error').style.display = 'block'; }
         }
 
         function initializePubNub() {
             myId = 'MYROC-' + Math.floor(1000 + Math.random() * 9000);
             pubnub = new PubNub({ publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048', subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c', userId: myId });
             pubnub.addListener({ message: function(event) {
-                const msg = event.message;
-                if (msg.action === 'searching' && msg.peerId !== myId) {
-                    if (myId < msg.peerId) initiateWebRTCCall(msg.peerId);
-                }
-                else if (msg.action === 'sdp-offer') handleSDPOffer(msg);
-                else if (msg.action === 'sdp-answer') handleSDPAnswer(msg);
-                else if (msg.action === 'ice-candidate') handleICECandidate(msg);
+                if (event.message.action === 'searching' && event.message.peerId !== myId) initiateWebRTCCall(event.message.peerId);
+                else if (event.message.action === 'sdp-offer') handleSDPOffer(event.message);
+                else if (event.message.action === 'sdp-answer') handleSDPAnswer(event.message);
             }});
         }
+
+        async function startAudio() {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 2 } });
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(audioStream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 128;
+            source.connect(analyser);
+            document.getElementById('micBtn').innerText = "Mute Input";
+            updateVisualizer();
+        }
+
+        async function startVideo() {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            document.getElementById('webcam').srcObject = videoStream;
+            document.getElementById('webcam').style.display = 'block';
+            document.getElementById('camBtn').innerText = "Turn Video Off";
+        }
+
+        function updateVisualizer() {
+            if (!analyser) return;
+            requestAnimationFrame(updateVisualizer);
+            let dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+            document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = `${Math.max(2, (dataArray[i]/255)*50)}px`);
+        }
+
+        function toggleMicFeed() { if(!audioStream) startAudio(); else { audioStream.getTracks().forEach(t => t.stop()); audioStream = null; document.getElementById('micBtn').innerText = "Test Instrument Input"; } }
+        function toggleCam() { if(!videoStream) startVideo(); else { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; document.getElementById('webcam').style.display = 'none'; document.getElementById('camBtn').innerText = "Click to Turn Video On"; } }
 
         async function enterJam() {
             await startAudio(); await startVideo();
             document.getElementById('setup-inputs').style.display = 'none';
             document.getElementById('jam-room-display').style.display = 'flex';
-            pubnub.subscribe({ channels: [currentLobbyChannel] });
-            searchInterval = setInterval(() => {
-                pubnub.publish({ channel: currentLobbyChannel, message: { action: 'searching', peerId: myId } });
-            }, 2000);
+            pubnub.subscribe({ channels: ['myroc-global-lobby'] });
+            searchInterval = setInterval(() => pubnub.publish({ channel: 'myroc-global-lobby', message: { action: 'searching', peerId: myId } }), 2000);
         }
 
         function leaveJam() {
-            // Force reset UI
             document.getElementById('local-video-container').style.width = '100%';
             document.getElementById('peer-video-container').style.display = 'none';
             document.getElementById('webcam').srcObject = null;
-            document.getElementById('peerWebcam').srcObject = null;
-            
-            // Clean up
             if(searchInterval) clearInterval(searchInterval);
-            pubnub.unsubscribe({ channels: [currentLobbyChannel] });
+            pubnub.unsubscribe({ channels: ['myroc-global-lobby'] });
             if(peerConnection) { peerConnection.close(); peerConnection = null; }
-            targetPeerId = null; 
-            
             document.getElementById('jam-room-display').style.display = 'none';
             document.getElementById('setup-inputs').style.display = 'block';
         }
-
-        // --- Keep existing PeerConnection, StartAudio, StartVideo functions below ---
     </script>
 </body>
 </html>
