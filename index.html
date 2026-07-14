@@ -431,22 +431,22 @@
             <div class="input-group">
                 <label for="instrument">What You're Plugging In</label>
                 <select id="instrument">
-                    <option value="Electric Guitar">🎸 Electric Guitar</option>
-                    <option value="Bass Guitar">🎸 Bass Guitar</option>
-                    <option value="Electronic Drums">🥁 Electronic Drums</option>
-                    <option value="Piano / Keyboard">🎹 Digital Piano / Keyboard</option>
-                    <option value="Electric Violin">🎻 Electric Violin</option>
+                    <option value="guitar">🎸 Electric Guitar</option>
+                    <option value="bass">🎸 Bass Guitar</option>
+                    <option value="drums">🥁 Electronic Drums</option>
+                    <option value="keys">🎹 Digital Piano / Keyboard</option>
+                    <option value="violin">🎻 Electric Violin</option>
                 </select>
             </div>
 
             <div class="input-group">
                 <label for="search">Who You're Looking For</label>
                 <select id="search">
-                    <option value="Electric Guitarist">🎸 Electric Guitarist</option>
-                    <option value="Bass Player">🎸 Bassist</option>
-                    <option value="Drummer">🥁 Drummer</option>
-                    <option value="Keyboardist">🎹 Keyboardist</option>
-                    <option value="Violinist">🎻 Violinist</option>
+                    <option value="guitar">🎸 Electric Guitarist</option>
+                    <option value="bass">🎸 Bassist</option>
+                    <option value="drums">🥁 Drummer</option>
+                    <option value="keys">🎹 Keyboardist</option>
+                    <option value="violin">🎻 Violinist</option>
                 </select>
             </div>
 
@@ -497,6 +497,23 @@
         let pubnub = null;
         let currentLobbyChannel = 'myroc-global-lobby';
 
+        // Clean text formatting maps for standardized value keys
+        const instrumentLabels = {
+            'guitar': 'Electric Guitar',
+            'bass': 'Bass Guitar',
+            'drums': 'Electronic Drums',
+            'keys': 'Piano / Keyboard',
+            'violin': 'Electric Violin'
+        };
+
+        const searchLabels = {
+            'guitar': 'Electric Guitarist',
+            'bass': 'Bassist',
+            'drums': 'Drummer',
+            'keys': 'Keyboardist',
+            'violin': 'Violinist'
+        };
+
         // Connect both networks on startup
         window.addEventListener('DOMContentLoaded', () => {
             // 1. Initialize PeerJS with a clean unique ID
@@ -521,223 +538,10 @@
                 call.answer(streamsToOffer);
                 
                 call.on('stream', (remoteStream) => {
-                    handleMatchedPeerStream(remoteStream);
+                    const currentSearchKey = document.getElementById('search').value;
+                    const cleanTargetName = searchLabels[currentSearchKey];
+                    handleMatchedPeerStream(remoteStream, cleanTargetName);
                 });
             });
 
-            // 2. Initialize PubNub with your secure developer keys
-            pubnub = new PubNub({
-                publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048',
-                subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c',
-                userId: randomId
-            });
-
-            // Listen for matchmaking signals in the background
-            pubnub.addListener({
-                message: function(event) {
-                    const msg = event.message;
-                    
-                    // Ignore our own search messages
-                    if (msg.peerId === myPeerId) return;
-
-                    // Matchmaking Logic: Do their criteria match our current search?
-                    const myInstrument = document.getElementById('instrument').value;
-                    const myTarget = document.getElementById('search').value;
-
-                    if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
-                        // WE HAVE A MATCH! 
-                        // Stop searching and notify the other peer directly that we are locking onto them
-                        pubnub.publish({
-                            channel: currentLobbyChannel,
-                            message: {
-                                action: 'match-found',
-                                targetId: msg.peerId,
-                                matchId: myPeerId,
-                                instrument: myInstrument
-                            }
-                        });
-                        
-                        // Call them directly via PeerJS to start WebRTC audio/video stream exchange
-                        connectToPeer(msg.peerId, msg.instrument);
-                    } 
-                    
-                    else if (msg.action === 'match-found' && msg.targetId === myPeerId) {
-                        // The other peer found us and told us to stand by for their connection call!
-                        document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY...";
-                    }
-                }
-            });
-
-            pubnub.subscribe({ channels: [currentLobbyChannel] });
-        });
-
-        // Triggered when matchmaking finds a partner
-        function connectToPeer(targetPeerId, peerInstrumentName) {
-            let streamsToOffer = new MediaStream();
-            if (videoStream) videoStream.getVideoTracks().forEach(t => streamsToOffer.addTrack(t));
-            if (audioStream) audioStream.getAudioTracks().forEach(t => streamsToOffer.addTrack(t));
-
-            activeCall = myPeer.call(targetPeerId, streamsToOffer);
-            
-            activeCall.on('stream', (remoteStream) => {
-                handleMatchedPeerStream(remoteStream, peerInstrumentName);
-            });
-        }
-
-        // Renders the real live audio/video stream inside your split screen card
-        function handleMatchedPeerStream(remoteStream, instrumentName = "Matched Partner") {
-            const peerVideoElement = document.getElementById('peerWebcam');
-            
-            // Route the WebRTC stream to the video element
-            peerVideoElement.srcObject = remoteStream;
-            peerVideoElement.style.display = 'block';
-            
-            // Update connection UI state
-            document.getElementById('jam-status').innerText = `CONNECTED! Jamming with ${instrumentName}`;
-            document.getElementById('jam-status').style.color = '#00e5ff';
-            document.getElementById('latency-val').innerText = "P2P Connection: Active (12ms Latency)";
-            document.getElementById('latency-val').style.color = '#00e5ff';
-
-            // Visually split screen to render their camera angle
-            document.getElementById('local-video-container').style.width = '50%';
-            document.getElementById('peer-video-container').style.display = 'flex';
-            document.getElementById('peer-placeholder').style.display = 'none'; // Hide backup emoji
-        }
-
-        async function toggleMicFeed() {
-            const micBtn = document.getElementById('micBtn');
-            barElements = document.querySelectorAll('.eq-bar');
-
-            if (!audioStream) {
-                try {
-                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const source = audioContext.createMediaStreamSource(audioStream);
-                    analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 256;
-                    source.connect(analyser);
-                    const bufferLength = analyser.frequencyBinCount;
-                    dataArray = new Uint8Array(bufferLength);
-                    micBtn.innerText = "Mute Input";
-                    micBtn.classList.add('active');
-                    updateVisualizer();
-                } catch (err) {
-                    alert("Input microphone permission was denied.");
-                }
-            } else {
-                audioStream.getTracks().forEach(track => track.stop());
-                audioStream = null;
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                for (let i = 0; i < barElements.length; i++) barElements[i].style.height = '2px';
-                micBtn.innerText = "Test Instrument Input";
-                micBtn.classList.remove('active');
-            }
-        }
-
-        function updateVisualizer() {
-            if (!analyser) return;
-            animationFrameId = requestAnimationFrame(updateVisualizer);
-            analyser.getByteFrequencyData(dataArray);
-            
-            for (let i = 0; i < barElements.length; i++) {
-                let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
-                let value = dataArray[binIndex] || 0;
-                let percentHeight = (value / 255) * 50; 
-                barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
-            }
-        }
-
-        async function toggleCam() {
-            const btn = document.getElementById('camBtn');
-            const video = document.getElementById('webcam');
-
-            if (!videoStream) {
-                try {
-                    videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = videoStream;
-                    video.style.display = 'block';
-                    btn.innerText = "Turn Video Off"; 
-                    btn.classList.add('active');
-                } catch (err) {
-                    alert("Camera capture permission was denied.");
-                }
-            } else {
-                videoStream.getTracks().forEach(track => track.stop());
-                videoStream = null;
-                video.style.display = 'none';
-                btn.innerText = "Click to Turn Video On"; 
-                btn.classList.remove('active');
-            }
-        }
-
-        // Begins real background matchmaking
-        function enterJam() {
-            const inst = document.getElementById('instrument').value;
-            const target = document.getElementById('search').value;
-            const latencyFooter = document.getElementById('latency-val');
-            
-            // Hide selection dropdowns and the initial jam button
-            document.getElementById('setup-inputs').style.display = 'none';
-            
-            // Set state to searching
-            document.getElementById('jam-status').innerText = `SEARCHING FOR A ${target.toUpperCase()}...`;
-            document.getElementById('jam-status').style.color = '#888888';
-            latencyFooter.innerText = "Lobby Status: Matchmaking Active...";
-            latencyFooter.style.color = '#888888';
-            
-            // Reveal active Jam Room space
-            const jamDisplay = document.getElementById('jam-room-display');
-            jamDisplay.style.display = 'flex';
-
-            // Reset UI layout containers
-            document.getElementById('local-video-container').style.width = '100%';
-            document.getElementById('peer-video-container').style.display = 'none';
-            document.getElementById('peerWebcam').style.display = 'none';
-            document.getElementById('peer-placeholder').style.display = 'flex';
-
-            // Background Broadcast: Signal to everyone in the lobby what we have and what we need
-            pubnub.publish({
-                channel: currentLobbyChannel,
-                message: {
-                    action: 'searching',
-                    peerId: myPeerId,
-                    instrument: inst,
-                    lookingFor: target
-                }
-            });
-        }
-
-        // Returns seamlessly back to setup screen
-        function leaveJam() {
-            if (activeCall) {
-                activeCall.close();
-                activeCall = null;
-            }
-
-            // Inform the lobby we are out
-            pubnub.publish({
-                channel: currentLobbyChannel,
-                message: {
-                    action: 'disconnected',
-                    peerId: myPeerId
-                }
-            });
-
-            // Hide the active Jam Room controls
-            document.getElementById('jam-room-display').style.display = 'none';
-            
-            // Bring back setup dropdowns
-            document.getElementById('setup-inputs').style.display = 'block';
-
-            // Collapse screen split back to 100% full local view
-            document.getElementById('local-video-container').style.width = '100%';
-            document.getElementById('peer-video-container').style.display = 'none';
-
-            // Reset latency footer back to default idle state
-            const latencyFooter = document.getElementById('latency-val');
-            latencyFooter.innerText = "System Status: Ready to Jam";
-            latencyFooter.style.color = '#00e5ff';
-        }
-    </script>
-</body>
-</html>
+            // 2. Initialize PubNub with secure
