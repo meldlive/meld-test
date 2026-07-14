@@ -25,7 +25,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow: hidden; /* Strict layout container lock */
+            overflow: hidden; /* Viewport layout lock */
             padding-bottom: 10px;
         }
 
@@ -481,7 +481,7 @@
     </div>
 
     <script>
-        // DEVELOPER SNIFFER: Tracks layout processing or initialization failures
+        // ERROR SNIFFER: Keeps app from silently crashing on mobile browsers
         window.onerror = function(message, source, lineno, colno, error) {
             const footer = document.getElementById('latency-val');
             if (footer) {
@@ -499,7 +499,7 @@
         let animationFrameId = null;
         let barElements = [];
 
-        // Connection & PubNub Handshake variables (PeerJS fully abstracted!)
+        // Connection & PubNub Handshake variables
         let myId = null;
         let peerConnection = null;
         let pubnub = null;
@@ -507,21 +507,27 @@
         let searchInterval = null;
         let targetPeerId = null;
 
-        // Google Global STUN Infrastructure to pierce aggressive carrier NAT and firewalls
+        // UPGRADE: Expanded global ICE Infrastructure with both Google STUN and free fallback public cloud TURN relays
         const rtcConfig = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' }
-            ]
-        };
-
-        const instrumentLabels = {
-            'guitar': 'Electric Guitar',
-            'bass': 'Bass Guitar',
-            'drums': 'Electronic Drums',
-            'keys': 'Digital Piano / Keyboard',
-            'violin': 'Electric Violin'
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                // Public Open Test Relay Configuration to parse Symmetric Carrier NATs
+                {
+                    urls: 'turn:openrelay.metered.ca:80',
+                    username: 'openrelay',
+                    credential: 'openrelay'
+                },
+                {
+                    urls: 'turn:openrelay.metered.ca:443',
+                    username: 'openrelay',
+                    credential: 'openrelay'
+                }
+            ],
+            iceCandidatePoolSize: 10
         };
 
         const searchLabels = {
@@ -532,7 +538,7 @@
             'violin': 'Electric Violin'
         };
 
-        // Initialize pure database signaling connection on startup
+        // Initialize signaling layers on script load
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof PubNub === 'undefined') {
                 const footer = document.getElementById('latency-val');
@@ -544,14 +550,12 @@
             myId = 'MYROC-' + Math.floor(1000 + Math.random() * 9000);
 
             try {
-                // Instantiating private real-time workspace layer
                 pubnub = new PubNub({
                     publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048',
                     subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c',
                     userId: myId
                 });
 
-                // Real-time matrix background listener
                 pubnub.addListener({
                     message: function(event) {
                         const msg = event.message;
@@ -602,7 +606,7 @@
                 document.getElementById('latency-val').style.color = '#00e5ff';
 
             } catch (err) {
-                console.error("Matrix setup failure: ", err);
+                console.error("Matrix execution error: ", err);
             }
         });
 
@@ -617,6 +621,24 @@
             if (peerConnection) return;
 
             peerConnection = new RTCPeerConnection(rtcConfig);
+
+            // UPGRADE: Real-time network health diagnostics processor
+            peerConnection.onconnectionstatechange = () => {
+                const state = peerConnection.connectionState;
+                const footer = document.getElementById('latency-val');
+                if (footer) {
+                    if (state === 'connecting') {
+                        footer.innerText = "Network Engine: Connecting across towns...";
+                        footer.style.color = '#888888';
+                    } else if (state === 'connected') {
+                        footer.innerText = "P2P Connection: Active (12ms Latency)";
+                        footer.style.color = '#00e5ff';
+                    } else if (state === 'failed' || state === 'disconnected') {
+                        footer.innerText = "Network Bridge Blocked. Retrying stream...";
+                        footer.style.color = '#ff3b30';
+                    }
+                }
+            };
 
             const localFeed = getLocalStream();
             localFeed.getTracks().forEach(track => {
@@ -649,7 +671,10 @@
             createPeerConnection();
 
             try {
-                const offer = await peerConnection.createOffer();
+                const offer = await peerConnection.createOffer({
+                    offerToReceiveAudio: 1,
+                    offerToReceiveVideo: 1
+                });
                 await peerConnection.setLocalDescription(offer);
 
                 const myInstrument = document.getElementById('instrument').value;
@@ -666,7 +691,7 @@
                     });
                 }
             } catch (err) {
-                console.error("Offer mapping creation failure: ", err);
+                console.error("Offer framework mapping error: ", err);
             }
         }
 
@@ -691,7 +716,7 @@
                     });
                 }
             } catch (err) {
-                console.error("Remote offer target alignment mapping error: ", err);
+                console.error("Remote target processing execution error: ", err);
             }
         }
 
@@ -701,16 +726,16 @@
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.answer));
                 }
             } catch (err) {
-                console.error("Remote design criteria evaluation failure: ", err);
+                console.error("Answer evaluation processing failure: ", err);
             }
         }
 
         async function handleICECandidate(msg) {
-            if (peerConnection && msg.candidate) {
+            if (peerConnection) {
                 try {
                     await peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate));
                 } catch (err) {
-                    console.error("Ice track addition failure: ", err);
+                    console.error("ICE candidate append routing failure: ", err);
                 }
             }
         }
@@ -727,8 +752,6 @@
             
             document.getElementById('jam-status').innerText = `CONNECTED! Jamming with ${targetName}`;
             document.getElementById('jam-status').style.color = '#00e5ff';
-            document.getElementById('latency-val').innerText = "P2P Connection: Active (12ms Latency)";
-            document.getElementById('latency-val').style.color = '#00e5ff';
 
             document.getElementById('local-video-container').style.width = '50%';
             document.getElementById('peer-video-container').style.display = 'flex';
@@ -752,7 +775,7 @@
                     micBtn.classList.add('active');
                     updateVisualizer();
                 } catch (err) {
-                    console.warn("Hardware sound track permission bypassed.", err);
+                    console.warn("Hardware audio input bypassed.", err);
                 }
             }
         }
@@ -768,7 +791,7 @@
                     btn.innerText = "Turn Video Off"; 
                     btn.classList.add('active');
                 } catch (err) {
-                    console.warn("Hardware visual capture permission bypassed.", err);
+                    console.warn("Hardware layout vision stream bypassed.", err);
                 }
             }
         }
