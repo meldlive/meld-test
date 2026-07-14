@@ -6,6 +6,7 @@
     <title>MYROC | Powered by MELD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- Secure PubNub for private matchmaking & handshaking -->
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
     
     <style>
@@ -25,7 +26,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow: hidden; /* Viewport layout lock */
+            overflow: hidden; 
             padding-bottom: 10px;
         }
 
@@ -89,7 +90,7 @@
             max-width: 400px;
             background: #060606;
             border: 1px solid #121212;
-            padding: 12px 16px;
+            padding: 24px 16px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.95);
             display: flex;
@@ -100,7 +101,49 @@
             margin-bottom: 10px;
         }
 
-        /* VIDEO MODULE PREVIEW WITH FLEX DISPLAY FOR SPLIT SCREEN */
+        /* PASSWORD GATE SPECIAL INPUT STYLES */
+        .gate-title {
+            font-size: 14px;
+            color: #00e5ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .gate-input {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #161616;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 3px;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
+        }
+
+        .gate-input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .gate-error-msg {
+            color: #ff3b30;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+            font-weight: 700;
+        }
+
+        /* VIDEO MODULE PREVIEW */
         .camera-preview-box {
             width: 100%;
             height: 150px; 
@@ -127,15 +170,6 @@
             z-index: 1;
         }
 
-        /* Suppress native browser player interface overlays */
-        video::-webkit-media-controls-start-playback-button,
-        video::-webkit-media-controls-play-button,
-        video::-webkit-media-controls-panel {
-            display: none !important;
-            -webkit-appearance: none;
-        }
-
-        /* Action button configured to clear central clutter */
         .video-toggle-btn {
             background: #111111;
             border: 1px solid #222222;
@@ -152,7 +186,6 @@
             transition: all 0.2s;
         }
 
-        /* Video Active Corner Overlay State */
         .video-toggle-btn.active {
             position: absolute;
             top: 10px;
@@ -244,7 +277,6 @@
             -webkit-appearance: none;
         }
 
-        /* GLOWING ACTION JAM BUTTON */
         .jam-btn {
             width: 100%;
             background: #000000;
@@ -269,7 +301,7 @@
             box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* 4. FOOTER LINK DOCK CONTAINER */
+        /* FOOTER MODULE DOCK */
         .footer-network {
             width: 100%;
             max-width: 400px;
@@ -292,7 +324,6 @@
             position: relative;
             width: 34px; 
             height: 19.63px;
-            background-color: transparent;
             border-left: 2px solid #00e5ff;
             border-right: 2px solid #00e5ff;
             margin: 4px 0;
@@ -301,7 +332,6 @@
             align-items: center;
             text-decoration: none;
             color: #ffffff;
-            transition: transform 0.2s;
         }
 
         .hex-anchor::before, .hex-anchor::after {
@@ -315,26 +345,11 @@
             z-index: 1;
         }
 
-        .hex-anchor::before {
-            top: -12.02px;
-            border-top: 2px solid #00e5ff;
-            border-right: 2px solid #00e5ff;
-        }
+        .hex-anchor::before { top: -12.02px; border-top: 2px solid #00e5ff; border-right: 2px solid #00e5ff; }
+        .hex-anchor::after { bottom: -12.02px; border-bottom: 2px solid #00e5ff; border-left: 2px solid #00e5ff; }
 
-        .hex-anchor::after {
-            bottom: -12.02px;
-            border-bottom: 2px solid #00e5ff;
-            border-left: 2px solid #00e5ff;
-        }
+        .hex-inner-symbol { font-size: 11px; z-index: 5; position: relative; }
 
-        .hex-inner-symbol {
-            font-size: 11px;
-            z-index: 5;
-            position: relative;
-            line-height: 1;
-        }
-
-        /* STATUS BASELINE WITH GLOW EFFECT */
         .latency-footer {
             font-size: 8px;
             color: #222222;
@@ -344,26 +359,15 @@
             margin-top: 4px;
             text-align: center;
             width: 100%;
-            transition: color 0.3s ease;
         }
 
-        /* GLOWING PULSE ANIMATIONS */
         @keyframes pulse {
             0% { transform: scale(0.92); opacity: 0.6; }
             100% { transform: scale(1.08); opacity: 1; }
         }
 
-        /* Peer simulated dancing EQ bars animation */
-        @keyframes peerEQ {
-            0% { height: 2px; }
-            50% { height: 16px; }
-            100% { height: 4px; }
-        }
-        @keyframes peerEQ-alt {
-            0% { height: 6px; }
-            50% { height: 3px; }
-            100% { height: 14px; }
-        }
+        @keyframes peerEQ { 0% { height: 2px; } 50% { height: 16px; } 100% { height: 4px; } }
+        @keyframes peerEQ-alt { 0% { height: 6px; } 50% { height: 3px; } 100% { height: 14px; } }
 
         .peer-eq-bar {
             width: 2px;
@@ -381,20 +385,27 @@
 
     <div class="brand-container">
         <div class="logo">MYROC</div>
-        <div class="tagline">Audio Collaboration Engine</div>
+        <div class="tagline" id="brand-tagline">Beta Portal Access</div>
     </div>
 
-    <div class="setup-card">
+    <!-- 1. THE PASSWORD GATE CARD (Active on initial page load) -->
+    <div class="setup-card" id="password-gate-card">
+        <h3 class="gate-title">Enter Access Key</h3>
+        <input type="password" class="gate-input" id="portal-password" placeholder="••••••••" onkeydown="handleGateKeyPress(event)">
+        <div class="gate-error-msg" id="gate-error">Access Denied. Invalid Beta Key.</div>
+        <button class="jam-btn" onclick="verifyBetaPassword()">Unlock Portal</button>
+    </div>
+
+    <!-- 2. THE SYSTEM APPARATUS CARD (Hidden until password verified) -->
+    <div class="setup-card" id="app-portal-card" style="display: none; padding: 12px 16px;">
         
         <div class="camera-preview-box" style="display: flex;">
-            
             <div id="local-video-container" style="width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: width 0.3s ease;">
                 <video id="webcam" autoplay playsinline muted></video>
                 <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Click to Turn Video On</button>
             </div>
 
             <div id="peer-video-container" style="display: none; width: 50%; height: 100%; border-left: 1px solid #121212; position: relative; background: #080808; flex-direction: column; justify-content: center; align-items: center; transition: all 0.3s ease;">
-                
                 <video id="peerWebcam" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1;"></video>
                 
                 <div id="peer-placeholder" style="z-index: 2; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -409,7 +420,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="visualizer-area">
@@ -462,52 +472,64 @@
 
     <div class="footer-network">
         <div class="social-row">
-            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-instagram hex-inner-symbol"></i>
-            </a>
-            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-tiktok hex-inner-symbol"></i>
-            </a>
-            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank">
-                <i class="fa-brands fa-x-twitter hex-inner-symbol"></i>
-            </a>
-            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor">
-                <i class="fa-regular fa-envelope hex-inner-symbol"></i>
-            </a>
+            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-instagram hex-inner-symbol"></i></a>
+            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-tiktok hex-inner-symbol"></i></a>
+            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-x-twitter hex-inner-symbol"></i></a>
+            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor"><i class="fa-regular fa-envelope hex-inner-symbol"></i></a>
         </div>
-        <div class="latency-footer" id="latency-val">
-            Initializing MELD Network...
-        </div>
+        <div class="latency-footer" id="latency-val">Initializing MELD Network...</div>
     </div>
 
     <script>
-        // ERROR SNIFFER: Keeps app from silently crashing on mobile browsers
         window.onerror = function(message, source, lineno, colno, error) {
             const footer = document.getElementById('latency-val');
-            if (footer) {
-                footer.innerText = "Error: " + message + " (Line " + lineno + ")";
-                footer.style.color = '#ff3b30';
-            }
+            if (footer) { footer.innerText = "Error: " + message + " (Line " + lineno + ")"; footer.style.color = '#ff3b30'; }
             return false;
         };
 
-        let videoStream = null;
-        let audioStream = null;
-        let audioContext = null;
-        let analyser = null;
-        let dataArray = null;
-        let animationFrameId = null;
-        let barElements = [];
+        // BETA PASSWORD ACCESS LOGIC
+        // Feel free to change the 'meldjam' string inside the quotes to your preferred password!
+        const BETA_ACCESS_KEY = "meldjam"; 
 
-        // Connection & PubNub Handshake variables
-        let myId = null;
-        let peerConnection = null;
-        let pubnub = null;
-        let currentLobbyChannel = 'myroc-global-lobby';
-        let searchInterval = null;
-        let targetPeerId = null;
+        function handleGateKeyPress(event) {
+            if (event.key === "Enter") {
+                verifyBetaPassword();
+            }
+        }
 
-        // UPGRADE: Expanded global ICE Infrastructure with both Google STUN and free fallback public cloud TURN relays
+        function verifyBetaPassword() {
+            const inputVal = document.getElementById('portal-password').value.trim();
+            const errorMsg = document.getElementById('gate-error');
+            
+            // Check if user entry matches password (case-insensitive)
+            if (inputVal.toLowerCase() === BETA_ACCESS_KEY.toLowerCase()) {
+                sessionStorage.setItem('myroc_unlocked', 'true'); // Keep logged in for session duration
+                revealMainPortal();
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('portal-password').value = ""; // Clear input field
+            }
+        }
+
+        function revealMainPortal() {
+            document.getElementById('password-gate-card').style.display = 'none';
+            document.getElementById('app-portal-card').style.display = 'block';
+            document.getElementById('brand-tagline').innerText = "Audio Collaboration Engine";
+            
+            // Run standard WebRTC/PubNub startup sequence
+            initializeEngineAndConnection();
+        }
+
+        // Keep session memory active across page reloads
+        window.addEventListener('load', () => {
+            if (sessionStorage.getItem('myroc_unlocked') === 'true') {
+                revealMainPortal();
+            }
+        });
+
+        let videoStream = null; let audioStream = null; let audioContext = null; let analyser = null; let dataArray = null; let animationFrameId = null; let barElements = [];
+        let myId = null; let peerConnection = null; let pubnub = null; let currentLobbyChannel = 'myroc-global-lobby'; let searchInterval = null; let targetPeerId = null;
+
         const rtcConfig = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
@@ -515,7 +537,6 @@
                 { urls: 'stun:stun2.l.google.com:19302' },
                 { urls: 'stun:stun3.l.google.com:19302' },
                 { urls: 'stun:stun4.l.google.com:19302' },
-                // Public Open Test Relay Configuration to parse Symmetric Carrier NATs
                 {
                     urls: 'turn:openrelay.metered.ca:80',
                     username: 'openrelay',
@@ -538,12 +559,11 @@
             'violin': 'Electric Violin'
         };
 
-        // Initialize signaling layers on script load
-        window.addEventListener('DOMContentLoaded', () => {
+        // Moved into dedicated function triggered only after clean gate unlock
+        function initializeEngineAndConnection() {
             if (typeof PubNub === 'undefined') {
-                const footer = document.getElementById('latency-val');
-                footer.innerText = "Error: Matchmaker SDK Blocked. Disable AdBlock/Content Filter.";
-                footer.style.color = '#ff3b30';
+                document.getElementById('latency-val').innerText = "Error: Matchmaker SDK Blocked.";
+                document.getElementById('latency-val').style.color = '#ff3b30';
                 return;
             }
 
@@ -559,44 +579,26 @@
                 pubnub.addListener({
                     message: function(event) {
                         const msg = event.message;
-                        
                         if (msg.senderId === myId || msg.peerId === myId) return;
 
                         const myInstrument = document.getElementById('instrument').value;
                         const myTarget = document.getElementById('search').value;
 
-                        // Handshake Verification Matrix
                         if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
                             if (myId < msg.peerId) {
                                 targetPeerId = msg.peerId;
-                                if (searchInterval) {
-                                    clearInterval(searchInterval);
-                                    searchInterval = null;
-                                }
+                                if (searchInterval) { clearInterval(searchInterval); searchInterval = null; }
                                 initiateWebRTCCall(targetPeerId);
                             } else {
                                 targetPeerId = msg.peerId;
-                                if (searchInterval) {
-                                    clearInterval(searchInterval);
-                                    searchInterval = null;
-                                }
+                                if (searchInterval) { clearInterval(searchInterval); searchInterval = null; }
                                 document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY...";
                             }
                         }
-
-                        // WebRTC Matrix Signal Distribution 
-                        else if (msg.action === 'sdp-offer' && msg.targetId === myId) {
-                            handleSDPOffer(msg);
-                        }
-                        else if (msg.action === 'sdp-answer' && msg.targetId === myId) {
-                            handleSDPAnswer(msg);
-                        }
-                        else if (msg.action === 'ice-candidate' && msg.targetId === myId) {
-                            handleICECandidate(msg);
-                        }
-                        else if (msg.action === 'disconnected' && msg.peerId === targetPeerId) {
-                            leaveJam();
-                        }
+                        else if (msg.action === 'sdp-offer' && msg.targetId === myId) { handleSDPOffer(msg); }
+                        else if (msg.action === 'sdp-answer' && msg.targetId === myId) { handleSDPAnswer(msg); }
+                        else if (msg.action === 'ice-candidate' && msg.targetId === myId) { handleICECandidate(msg); }
+                        else if (msg.action === 'disconnected' && msg.peerId === targetPeerId) { leaveJam(); }
                     }
                 });
 
@@ -608,7 +610,7 @@
             } catch (err) {
                 console.error("Matrix execution error: ", err);
             }
-        });
+        }
 
         function getLocalStream() {
             const combinedStream = new MediaStream();
@@ -622,7 +624,6 @@
 
             peerConnection = new RTCPeerConnection(rtcConfig);
 
-            // UPGRADE: Real-time network health diagnostics processor
             peerConnection.onconnectionstatechange = () => {
                 const state = peerConnection.connectionState;
                 const footer = document.getElementById('latency-val');
