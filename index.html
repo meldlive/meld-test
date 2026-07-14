@@ -162,7 +162,7 @@
 
         let videoStream = null; let audioStream = null; let audioContext = null; let analyser = null; let dataArray = null; let animationFrameId = null; let barElements = [];
         let myId = null; let peerConnection = null; let pubnub = null; let currentLobbyChannel = 'myroc-global-lobby'; let searchInterval = null; let targetPeerId = null;
-        let isMatched = false; // Added state variable to track matching
+        let isMatched = false;
 
         function verifyBetaPassword() {
             if (document.getElementById('portal-password').value.trim().toLowerCase() === "meldjam") {
@@ -183,12 +183,14 @@
                 const myInstrument = document.getElementById('instrument').value;
                 const myTarget = document.getElementById('search').value;
                 
-                // Only process if not already matched
-                if (msg.action === 'searching' && !isMatched && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
-                    isMatched = true; // Lock status
-                    if(searchInterval) clearInterval(searchInterval);
-                    if (myId < msg.peerId) { targetPeerId = msg.peerId; initiateWebRTCCall(targetPeerId); }
-                    else { targetPeerId = msg.peerId; document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY..."; }
+                // Only process if we haven't found a match yet
+                if (msg.action === 'searching' && !isMatched) {
+                    if (msg.instrument === myTarget && msg.lookingFor === myInstrument) {
+                        isMatched = true; // Lock status so we don't pick up multiple peers
+                        if(searchInterval) clearInterval(searchInterval);
+                        if (myId < msg.peerId) { targetPeerId = msg.peerId; initiateWebRTCCall(targetPeerId); }
+                        else { targetPeerId = msg.peerId; document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY..."; }
+                    }
                 }
                 else if (msg.action === 'sdp-offer' && msg.targetId === myId) handleSDPOffer(msg);
                 else if (msg.action === 'sdp-answer' && msg.targetId === myId) handleSDPAnswer(msg);
@@ -201,17 +203,18 @@
             await startAudio(); await startVideo();
             document.getElementById('setup-inputs').style.display = 'none';
             document.getElementById('jam-room-display').style.display = 'flex';
+            document.getElementById('jam-status').innerText = "SEARCHING FOR PEER...";
             
             pubnub.subscribe({ channels: [currentLobbyChannel] });
             searchInterval = setInterval(() => {
-                if(!isMatched) { // Only broadcast if not matched
+                if(!isMatched) {
                     pubnub.publish({ channel: currentLobbyChannel, message: { action: 'searching', peerId: myId, instrument: document.getElementById('instrument').value, lookingFor: document.getElementById('search').value } });
                 }
             }, 2000);
         }
 
         function leaveJam() {
-            isMatched = false; // Reset state
+            isMatched = false;
             if(searchInterval) clearInterval(searchInterval);
             pubnub.unsubscribe({ channels: [currentLobbyChannel] });
             if(peerConnection) { peerConnection.close(); peerConnection = null; }
