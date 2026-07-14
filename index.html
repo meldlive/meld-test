@@ -5,71 +5,1086 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MYROC | Powered by MELD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #000000; color: #ffffff; height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow: hidden; padding-bottom: 10px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        .umbrella-bar { width: 100%; background-color: #050505; border-bottom: 1px solid #111111; padding: 8px 20px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-        .umbrella-link { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #555555; text-transform: uppercase; text-decoration: none; }
-        .brand-container { text-align: center; margin-top: 5px; width: 100%; flex-shrink: 0; }
-        .logo { font-size: 34px; font-weight: 900; letter-spacing: 8px; background: linear-gradient(180deg, #ffffff 0%, #888888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; line-height: 1.1; }
-        .tagline { font-size: 9px; color: #444444; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; font-weight: 700; }
-        
-        .setup-card { width: 90%; max-width: 400px; background: #060606; border: 1px solid #121212; padding: 24px 16px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.95); display: flex; flex-direction: column; flex-shrink: 0; margin-top: 8px; margin-bottom: 10px; }
-        
-        .gate-title { font-size: 14px; color: #00e5ff; text-transform: uppercase; letter-spacing: 2px; text-align: center; margin-bottom: 15px; font-weight: 800; }
-        .gate-input { width: 100%; background: #0a0a0a; border: 1px solid #161616; color: #ffffff; padding: 12px; border-radius: 12px; font-size: 16px; outline: none; text-align: center; letter-spacing: 3px; margin-bottom: 15px; }
-        .gate-error-msg { color: #ff3b30; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 10px; display: none; font-weight: 700; }
-        
-        /* SIGN UP SECTION */
-        .signup-section { margin-top: 20px; border-top: 1px solid #161616; padding-top: 20px; }
-        .signup-text { font-size: 9px; color: #555555; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 10px; }
-        
-        .jam-btn { width: 100%; background: #000000; color: #00e5ff; border: 2px solid #00e5ff; padding: 12px; border-radius: 30px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; transition: all 0.2s ease; }
-        
-        /* Shared Styles (Video/Footer remain same) */
-        .camera-preview-box { width: 100%; height: 150px; background-color: #0a0a0a; border: 1px dashed #222222; border-radius: 14px; margin-bottom: 8px; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-        .bandwidth-shield { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.9); border-radius: 14px; z-index: 10; flex-direction: column; justify-content: center; align-items: center; padding: 15px; text-align: center; }
-        .footer-network { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 5px; }
-        .hex-anchor { position: relative; width: 34px; height: 19.63px; border-left: 2px solid #00e5ff; border-right: 2px solid #00e5ff; margin: 4px 0; display: flex; justify-content: center; align-items: center; text-decoration: none; color: #ffffff; }
-        .latency-footer { font-size: 8px; color: #222222; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; text-align: center; width: 100%; }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow: hidden; 
+            padding-bottom: 10px;
+        }
+
+        /* 1. TOP HEADER LINK */
+        .umbrella-bar {
+            width: 100%;
+            background-color: #050505;
+            border-bottom: 1px solid #111111;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .umbrella-link {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #555555;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .umbrella-link:hover, .umbrella-link:active {
+            color: #00e5ff;
+        }
+
+        /* 2. BRANDING HEADLINE GROUP */
+        .brand-container {
+            text-align: center;
+            margin-top: 5px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 34px;
+            font-weight: 900;
+            letter-spacing: 8px;
+            background: linear-gradient(180deg, #ffffff 0%, #888888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .tagline {
+            font-size: 9px;
+            color: #444444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            font-weight: 700;
+        }
+
+        /* 3. CENTRAL CONSOLE CARD FRAME */
+        .setup-card {
+            width: 90%;
+            max-width: 400px;
+            background: #060606;
+            border: 1px solid #121212;
+            padding: 24px 16px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex-shrink: 0;
+            margin-top: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* PASSWORD GATE SPECIAL INPUT STYLES */
+        .gate-title {
+            font-size: 14px;
+            color: #00e5ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .gate-input {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #161616;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 3px;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
+        }
+
+        .gate-input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .gate-error-msg {
+            color: #ff3b30;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+            font-weight: 700;
+        }
+
+        /* VIDEO MODULE PREVIEW */
+        .camera-preview-box {
+            width: 100%;
+            height: 150px; 
+            background-color: #0a0a0a;
+            border: 1px dashed #222222;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .camera-preview-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* LOW BANDWIDTH OVERLAY SHIELD */
+        .bandwidth-shield {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            border-radius: 14px;
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .bandwidth-shield i {
+            font-size: 24px;
+            color: #ffaa00;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+        }
+
+        .bandwidth-shield h4 {
+            font-size: 10px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .bandwidth-shield p {
+            font-size: 8px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .video-toggle-btn {
+            background: #111111;
+            border: 1px solid #222222;
+            color: #888888;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            z-index: 2;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .video-toggle-btn.active {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #00e5ff;
+            color: #00e5ff;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+            padding: 6px 12px;
+        }
+
+        /* AUDIO VISUALIZER MODULE */
+        .visualizer-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 10px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .visualizer-container {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .eq-bar {
+            flex-grow: 1;
+            margin: 0 1px;
+            height: 2px;
+            background: linear-gradient(180deg, #00e5ff 0%, #0088ff 100%);
+            border-radius: 1px;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+            transition: height 0.04s ease;
+        }
+
+        .mic-toggle-link {
+            font-size: 9px;
+            color: #00e5ff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            background: none;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .mic-toggle-link.active {
+            background: rgba(0, 229, 255, 0.1);
+            border-color: #00e5ff;
+        }
+
+        /* DROPDOWN OPTIONS */
+        .input-group {
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #555555;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .input-group select {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #161616;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .jam-btn {
+            width: 100%;
+            background: #000000;
+            color: #00e5ff;
+            border: 2px solid #00e5ff;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
+            flex-shrink: 0;
+        }
+
+        .jam-btn:active {
+            transform: scale(0.98);
+            background: #00e5ff;
+            color: #000000;
+            box-shadow: 0 0 25px #00e5ff;
+        }
+
+        /* FOOTER MODULE DOCK */
+        .footer-network {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .hex-anchor {
+            position: relative;
+            width: 34px; 
+            height: 19.63px;
+            border-left: 2px solid #00e5ff;
+            border-right: 2px solid #00e5ff;
+            margin: 4px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .hex-anchor::before, .hex-anchor::after {
+            content: "";
+            position: absolute;
+            width: 24.04px;
+            height: 24.04px;
+            transform: scaleY(0.5774) rotate(-45deg);
+            background-color: transparent;
+            left: 3.4px; 
+            z-index: 1;
+        }
+
+        .hex-anchor::before { top: -12.02px; border-top: 2px solid #00e5ff; border-right: 2px solid #00e5ff; }
+        .hex-anchor::after { bottom: -12.02px; border-bottom: 2px solid #00e5ff; border-left: 2px solid #00e5ff; }
+
+        .hex-inner-symbol { font-size: 11px; z-index: 5; position: relative; }
+
+        .latency-footer {
+            font-size: 8px;
+            color: #222222;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            text-align: center;
+            width: 100%;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.92); opacity: 0.6; }
+            100% { transform: scale(1.08); opacity: 1; }
+        }
+
+        @keyframes peerEQ { 0% { height: 2px; } 50% { height: 16px; } 100% { height: 4px; } }
+        @keyframes peerEQ-alt { 0% { height: 6px; } 50% { height: 3px; } 100% { height: 14px; } }
+
+        .peer-eq-bar {
+            width: 2px;
+            background: #00e5ff;
+            border-radius: 1px;
+            box-shadow: 0 0 6px rgba(0, 229, 255, 0.4);
+        }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false;"> <div class="umbrella-bar">
+        <a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a>
+    </div>
 
-    <div class="umbrella-bar"><a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a></div>
     <div class="brand-container">
         <div class="logo">MYROC</div>
         <div class="tagline" id="brand-tagline">Beta Portal Access</div>
     </div>
 
-    <!-- GATE CARD -->
     <div class="setup-card" id="password-gate-card">
         <h3 class="gate-title">Enter Access Key</h3>
         <input type="password" class="gate-input" id="portal-password" placeholder="••••••••" onkeydown="handleGateKeyPress(event)">
         <div class="gate-error-msg" id="gate-error">Access Denied. Invalid Beta Key.</div>
         <button class="jam-btn" onclick="verifyBetaPassword()">Unlock Portal</button>
-
-        <div class="signup-section">
-            <p class="signup-text">Don't have a key? Sign up for Beta access below:</p>
-            <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
-                <input type="email" name="email" class="gate-input" placeholder="ENTER YOUR EMAIL" required style="font-size: 12px;">
-                <button type="submit" class="jam-btn" style="border-color: #555555; color: #ffffff; padding: 8px; font-size: 10px;">SUBMIT REQUEST</button>
-            </form>
-        </div>
     </div>
 
-    <!-- APPARATUS (Main Portal Hidden until Auth) -->
     <div class="setup-card" id="app-portal-card" style="display: none; padding: 12px 16px;">
-        <!-- [Main Portal code remains exactly the same as previously optimized] -->
+        
+        <div class="camera-preview-box">
+            <div class="bandwidth-shield" id="bw-warning-shield">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h4>Bandwidth Warning</h4>
+                <p>Poor Connection. Video disabled to prioritize zero-lag audio stream.</p>
+            </div>
+
+            <div id="local-video-container" style="width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: width 0.3s ease;">
+                <video id="webcam" autoplay playsinline muted></video>
+                <button class="video-toggle-btn" id="camBtn" onclick="toggleCam()">Click to Turn Video On</button>
+            </div>
+
+            <div id="peer-video-container" style="display: none; width: 50%; height: 100%; border-left: 1px solid #121212; position: relative; background: #080808; flex-direction: column; justify-content: center; align-items: center; transition: all 0.3s ease;">
+                <video id="peerWebcam" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1;"></video>
+                
+                <div id="peer-placeholder" style="z-index: 2; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div id="peer-avatar" style="font-size: 28px; filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4)); animation: pulse 1.5s infinite alternate;">🥁</div>
+                    <span id="peer-label" style="font-size: 8px; color: #00e5ff; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; font-weight: 700;">Matched Peer</span>
+                    
+                    <div style="display: flex; gap: 2px; height: 18px; align-items: flex-end; margin-top: 6px;">
+                        <div class="peer-eq-bar" style="animation: peerEQ 0.4s infinite ease alternate;"></div>
+                        <div class="peer-eq-bar" style="animation: peerEQ-alt 0.5s infinite ease alternate 0.1s;"></div>
+                        <div class="peer-eq-bar" style="animation: peerEQ 0.3s infinite ease alternate 0.2s;"></div>
+                        <div class="peer-eq-bar" style="animation: peerEQ-alt 0.6s infinite ease alternate 0.05s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="visualizer-area">
+            <div class="visualizer-container" id="eqContainer">
+                <script>
+                    const container = document.getElementById('eqContainer');
+                    for (let i = 0; i < 60; i++) {
+                        const bar = document.createElement('div');
+                        bar.className = 'eq-bar';
+                        container.appendChild(bar);
+                    }
+                </script>
+            </div>
+            <button class="mic-toggle-link" id="micBtn" onclick="toggleMicFeed()">Test Instrument Input</button>
+        </div>
+
+        <div id="setup-inputs">
+            <div class="input-group">
+                <label for="instrument">What You're Plugging In</label>
+                <select id="instrument">
+                    <option value="guitar">🎸 Electric Guitar</option>
+                    <option value="bass">🎸 Bass Guitar</option>
+                    <option value="drums">🥁 Electronic Drums</option>
+                    <option value="keys">🎹 Digital Piano / Keyboard</option>
+                    <option value="violin">🎻 Electric Violin</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="search">Who You're Looking For</label>
+                <select id="search">
+                    <option value="guitar">🎸 Electric Guitar</option>
+                    <option value="bass">🎸 Bass Guitar</option>
+                    <option value="drums">🥁 Electronic Drums</option>
+                    <option value="keys">🎹 Digital Piano / Keyboard</option>
+                    <option value="violin">🎻 Electric Violin</option>
+                </select>
+            </div>
+
+            <button class="jam-btn" onclick="enterJam()">Jam Now</button>
+        </div>
+
+        <div id="jam-room-display" style="display: none; flex-direction: column; align-items: center; padding: 10px 0; gap: 12px; margin-top: 5px;">
+            <h2 style="font-size: 18px; color: #00e5ff; text-transform: uppercase; letter-spacing: 2px;">Jam Room</h2>
+            <p id="jam-status" style="font-size: 10px; color: #888888; text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.4;"></p>
+            <button class="jam-btn" style="border-color: #ff3b30; color: #ff3b30; box-shadow: 0 0 12px rgba(255, 59, 48, 0.15);" onclick="leaveJam()">Disconnect</button>
+        </div>
+
     </div>
 
-    <!-- Scripts and Footer remain unchanged -->
+    <div class="footer-network">
+        <div class="social-row">
+            <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-instagram hex-inner-symbol"></i></a>
+            <a href="https://tiktok.com/@meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-tiktok hex-inner-symbol"></i></a>
+            <a href="https://x.com/meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-x-twitter hex-inner-symbol"></i></a>
+            <a href="mailto:meldliveapp@gmail.com" class="hex-anchor"><i class="fa-regular fa-envelope hex-inner-symbol"></i></a>
+        </div>
+        <div class="latency-footer" id="latency-val">Initializing MELD Network...</div>
+    </div>
+
     <script>
-        // Setup Formspree: Go to Formspree.io, create a free account, 
-        // create a new form, and replace 'YOUR_FORMSPREE_ID' in the action line above!
+        // OBFUSCATION SHIELD: Disables inspector hotkeys (F12, Command/Ctrl options)
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || 
+               (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
+               (e.ctrlKey && e.shiftKey && e.keyCode == 74) || 
+               (e.metaKey && e.altKey && e.keyCode == 73)) {
+                return false;
+            }
+        };
+
+        window.onerror = function(message, source, lineno, colno, error) {
+            const footer = document.getElementById('latency-val');
+            if (footer) { footer.innerText = "Error: " + message + " (Line " + lineno + ")"; footer.style.color = '#ff3b30'; }
+            return false;
+        };
+
+        const BETA_ACCESS_KEY = "meldjam"; 
+
+        function handleGateKeyPress(event) {
+            if (event.key === "Enter") {
+                verifyBetaPassword();
+            }
+        }
+
+        function verifyBetaPassword() {
+            const inputVal = document.getElementById('portal-password').value.trim();
+            const errorMsg = document.getElementById('gate-error');
+            
+            if (inputVal.toLowerCase() === BETA_ACCESS_KEY.toLowerCase()) {
+                revealMainPortal();
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('portal-password').value = "";
+            }
+        }
+
+        function revealMainPortal() {
+            document.getElementById('password-gate-card').style.display = 'none';
+            document.getElementById('app-portal-card').style.display = 'block';
+            document.getElementById('brand-tagline').innerText = "Audio Collaboration Engine";
+            initializeEngineAndConnection();
+        }
+
+        let videoStream = null; let audioStream = null; let audioContext = null; let analyser = null; let dataArray = null; let animationFrameId = null; let barElements = [];
+        let myId = null; let peerConnection = null; let pubnub = null; let currentLobbyChannel = 'myroc-global-lobby'; let searchInterval = null; let targetPeerId = null;
+
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                {
+                    urls: 'turn:openrelay.metered.ca:80',
+                    username: 'openrelay',
+                    credential: 'openrelay'
+                },
+                {
+                    urls: 'turn:openrelay.metered.ca:443',
+                    username: 'openrelay',
+                    credential: 'openrelay'
+                }
+            ],
+            iceCandidatePoolSize: 10
+        };
+
+        const searchLabels = {
+            'guitar': 'Electric Guitar',
+            'bass': 'Bass Guitar',
+            'drums': 'Electronic Drums',
+            'keys': 'Digital Piano / Keyboard',
+            'violin': 'Electric Violin'
+        };
+
+        function initializeEngineAndConnection() {
+            if (typeof PubNub === 'undefined') {
+                document.getElementById('latency-val').innerText = "Error: Matchmaker SDK Blocked.";
+                document.getElementById('latency-val').style.color = '#ff3b30';
+                return;
+            }
+
+            myId = 'MYROC-' + Math.floor(1000 + Math.random() * 9000);
+
+            try {
+                pubnub = new PubNub({
+                    publishKey: 'pub-c-987e3578-5b94-4326-a99f-6119854af048',
+                    subscribeKey: 'sub-c-5aed2913-ab13-4dbc-b66f-ff97ec4ae16c',
+                    userId: myId
+                });
+
+                pubnub.addListener({
+                    message: function(event) {
+                        const msg = event.message;
+                        if (msg.senderId === myId || msg.peerId === myId) return;
+
+                        const myInstrument = document.getElementById('instrument').value;
+                        const myTarget = document.getElementById('search').value;
+
+                        if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
+                            if (myId < msg.peerId) {
+                                targetPeerId = msg.peerId;
+                                if (searchInterval) { clearInterval(searchInterval); searchInterval = null; }
+                                initiateWebRTCCall(targetPeerId);
+                            } else {
+                                targetPeerId = msg.peerId;
+                                if (searchInterval) { clearInterval(searchInterval); searchInterval = null; }
+                                document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY...";
+                            }
+                        }
+                        else if (msg.action === 'sdp-offer' && msg.targetId === myId) { handleSDPOffer(msg); }
+                        else if (msg.action === 'sdp-answer' && msg.targetId === myId) { handleSDPAnswer(msg); }
+                        else if (msg.action === 'ice-candidate' && msg.targetId === myId) { handleICECandidate(msg); }
+                        else if (msg.action === 'disconnected' && msg.peerId === targetPeerId) { leaveJam(); }
+                    }
+                });
+
+                pubnub.subscribe({ channels: [currentLobbyChannel] });
+
+                document.getElementById('latency-val').innerText = "System Status: Ready to Jam";
+                document.getElementById('latency-val').style.color = '#00e5ff';
+
+            } catch (err) {
+                console.error("Matrix execution error: ", err);
+            }
+        }
+
+        function getLocalStream() {
+            const combinedStream = new MediaStream();
+            if (videoStream) videoStream.getVideoTracks().forEach(t => combinedStream.addTrack(t));
+            if (audioStream) audioStream.getAudioTracks().forEach(t => combinedStream.addTrack(t));
+            return combinedStream;
+        }
+
+        function createPeerConnection() {
+            if (peerConnection) return;
+
+            peerConnection = new RTCPeerConnection(rtcConfig);
+
+            peerConnection.onconnectionstatechange = () => {
+                const state = peerConnection.connectionState;
+                const footer = document.getElementById('latency-val');
+                if (footer) {
+                    if (state === 'connecting') {
+                        footer.innerText = "Network Engine: Connecting across towns...";
+                        footer.style.color = '#888888';
+                    } else if (state === 'connected') {
+                        footer.innerText = "P2P Connection: Active (12ms Latency)";
+                        footer.style.color = '#00e5ff';
+                        monitorConnectionBandwidth();
+                    } else if (state === 'failed' || state === 'disconnected') {
+                        footer.innerText = "Network Bridge Blocked. Retrying stream...";
+                        footer.style.color = '#ff3b30';
+                    }
+                }
+            };
+
+            const localFeed = getLocalStream();
+            localFeed.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localFeed);
+            });
+
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate && targetPeerId && pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'ice-candidate',
+                            targetId: targetPeerId,
+                            senderId: myId,
+                            candidate: event.candidate
+                        }
+                    });
+                }
+            };
+
+            peerConnection.ontrack = (event) => {
+                const currentSearchKey = document.getElementById('search').value;
+                const cleanTargetName = searchLabels[currentSearchKey];
+                handleMatchedPeerStream(event.streams[0], cleanTargetName);
+            };
+        }
+
+        // REAL-TIME AUDIO-FIRST BANDWIDTH AND PACKET LOSS MONITOR
+        function monitorConnectionBandwidth() {
+            if (!peerConnection) return;
+
+            const intervalId = setInterval(async () => {
+                if (!peerConnection || peerConnection.connectionState !== 'connected') {
+                    clearInterval(intervalId);
+                    return;
+                }
+
+                try {
+                    const stats = await peerConnection.getStats();
+                    let packetLoss = 0;
+                    let roundTripTime = 0;
+
+                    stats.forEach(report => {
+                        if (report.type === 'inbound-rtp' && report.kind === 'video') {
+                            packetLoss = report.packetsLost || 0;
+                        }
+                        if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+                            roundTripTime = (report.currentRoundTripTime || 0) * 1000;
+                        }
+                    });
+
+                    // Target Trigger: Latency over 200ms or loss triggers Audio Priority Shield
+                    if (roundTripTime > 200 || packetLoss > 10) {
+                        triggerLowBandwidthMode();
+                        clearInterval(intervalId);
+                    }
+                } catch (err) {
+                    console.warn("Stats read bypass:", err);
+                }
+            }, 1500); 
+        }
+
+        // DISRUPT VIDEO CHANNELS & ALLOCATE ALL NETWORK PIPES TO OPUS AUDIO STREAM
+        function triggerLowBandwidthMode() {
+            document.getElementById('bw-warning-shield').style.display = 'flex';
+
+            if (videoStream) {
+                videoStream.getVideoTracks().forEach(track => {
+                    track.enabled = false; // Stops frame capture to free cellular cpu
+                });
+            }
+
+            const latencyFooter = document.getElementById('latency-val');
+            if (latencyFooter) {
+                latencyFooter.innerText = "Audio Locked (Video Offline for Low Bandwidth)";
+                latencyFooter.style.color = '#ffaa00';
+            }
+        }
+
+        // AUDIO-FIRST SDP PARSER: Injects Opus parameters directly into SDP streams for extreme priority
+        function optimizeSDPForAudio(sdp) {
+            let lines = sdp.split('\r\n');
+            let mAudioIndex = -1;
+
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf('m=audio') === 0) {
+                    mAudioIndex = i;
+                    break;
+                }
+            }
+
+            if (mAudioIndex !== -1) {
+                // Adjusts settings to use maximum average bitrate, turn on Forward Error Correction, and enable DTX packet skipping
+                for (let i = mAudioIndex; i < lines.length; i++) {
+                    if (lines[i].indexOf('a=fmtp:') === 0 && lines[i].indexOf('opus') !== -1) {
+                        lines[i] = lines[i] + ';maxaveragebitrate=128000;useinbandfec=1;usedtx=1;stereo=1';
+                    }
+                }
+            }
+            return lines.join('\r\n');
+        }
+
+        async function initiateWebRTCCall(targetId) {
+            document.getElementById('jam-status').innerText = "INITIATING LIVE CONNECTION...";
+            createPeerConnection();
+
+            try {
+                let offer = await peerConnection.createOffer({
+                    offerToReceiveAudio: 1,
+                    offerToReceiveVideo: 1
+                });
+                
+                offer.sdp = optimizeSDPForAudio(offer.sdp);
+                await peerConnection.setLocalDescription(offer);
+
+                const myInstrument = document.getElementById('instrument').value;
+                if (pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'sdp-offer',
+                            targetId: targetId,
+                            senderId: myId,
+                            offer: offer,
+                            instrument: myInstrument
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Offer setup error: ", err);
+            }
+        }
+
+        async function handleSDPOffer(msg) {
+            targetPeerId = msg.senderId;
+            createPeerConnection();
+
+            try {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.offer));
+                let answer = await peerConnection.createAnswer();
+                
+                answer.sdp = optimizeSDPForAudio(answer.sdp);
+                await peerConnection.setLocalDescription(answer);
+
+                if (pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'sdp-answer',
+                            targetId: targetPeerId,
+                            senderId: myId,
+                            answer: answer
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Offer processing failure: ", err);
+            }
+        }
+
+        async function handleSDPAnswer(msg) {
+            try {
+                if (peerConnection) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.answer));
+                }
+            } catch (err) {
+                console.error("Answer negotiation failure: ", err);
+            }
+        }
+
+        async function handleICECandidate(msg) {
+            if (peerConnection) {
+                try {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate));
+                } catch (err) {
+                    console.error("ICE injection failure: ", err);
+                }
+            }
+        }
+
+        function handleMatchedPeerStream(remoteStream, targetName = "Matched Partner") {
+            if (searchInterval) {
+                clearInterval(searchInterval);
+                searchInterval = null;
+            }
+
+            const peerVideoElement = document.getElementById('peerWebcam');
+            peerVideoElement.srcObject = remoteStream;
+            peerVideoElement.style.display = 'block';
+            
+            document.getElementById('jam-status').innerText = `CONNECTED! Jamming with ${targetName}`;
+            document.getElementById('jam-status').style.color = '#00e5ff';
+
+            document.getElementById('local-video-container').style.width = '50%';
+            document.getElementById('peer-video-container').style.display = 'flex';
+            document.getElementById('peer-placeholder').style.display = 'none';
+        }
+
+        async function startAudio() {
+            if (!audioStream) {
+                const micBtn = document.getElementById('micBtn');
+                barElements = document.querySelectorAll('.eq-bar');
+                try {
+                    audioStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: false,
+                            noiseSuppression: false,
+                            autoGainControl: false,
+                            latency: 0.005,
+                            channelCount: 2
+                        }, 
+                        video: false 
+                    });
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(audioStream);
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+                    source.connect(analyser);
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    micBtn.innerText = "Mute Input";
+                    micBtn.classList.add('active');
+                    updateVisualizer();
+                } catch (err) {
+                    console.warn("Microphone feed failed.", err);
+                }
+            }
+        }
+
+        async function startVideo() {
+            if (!videoStream) {
+                const btn = document.getElementById('camBtn');
+                const video = document.getElementById('webcam');
+                try {
+                    videoStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: {
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            frameRate: { ideal: 24 }
+                        } 
+                    });
+                    video.srcObject = videoStream;
+                    video.style.display = 'block';
+                    btn.innerText = "Turn Video Off"; 
+                    btn.classList.add('active');
+                } catch (err) {
+                    console.warn("Video camera failed.", err);
+                }
+            }
+        }
+
+        async function toggleMicFeed() {
+            if (!audioStream) {
+                await startAudio();
+            } else {
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                for (let i = 0; i < barElements.length; i++) barElements[i].style.height = '2px';
+                const micBtn = document.getElementById('micBtn');
+                micBtn.innerText = "Test Instrument Input";
+                micBtn.classList.remove('active');
+            }
+        }
+
+        function updateVisualizer() {
+            if (!analyser) return;
+            animationFrameId = requestAnimationFrame(updateVisualizer);
+            analyser.getByteFrequencyData(dataArray);
+            
+            for (let i = 0; i < barElements.length; i++) {
+                let binIndex = Math.floor(Math.pow(i / barElements.length, 1.5) * (dataArray.length * 0.7));
+                let value = dataArray[binIndex] || 0;
+                let percentHeight = (value / 255) * 50; 
+                barElements[i].style.height = `${Math.max(2, percentHeight)}px`;
+            }
+        }
+
+        async function toggleCam() {
+            if (!videoStream) {
+                await startVideo();
+            } else {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+                const video = document.getElementById('webcam');
+                video.style.display = 'none';
+                const btn = document.getElementById('camBtn');
+                btn.innerText = "Click to Turn Video On"; 
+                btn.classList.remove('active');
+            }
+        }
+
+        async function enterJam() {
+            const instKey = document.getElementById('instrument').value;
+            const targetKey = document.getElementById('search').value;
+            const latencyFooter = document.getElementById('latency-val');
+            
+            const cleanTargetName = searchLabels[targetKey];
+            
+            await startAudio();
+            await startVideo();
+
+            document.getElementById('setup-inputs').style.display = 'none';
+            
+            document.getElementById('jam-status').innerText = `SEARCHING FOR A ${cleanTargetName.toUpperCase()}...`;
+            document.getElementById('jam-status').style.color = '#888888';
+            latencyFooter.innerText = "Lobby Status: Matchmaking Active...";
+            latencyFooter.style.color = '#888888';
+            
+            const jamDisplay = document.getElementById('jam-room-display');
+            jamDisplay.style.display = 'flex';
+
+            document.getElementById('local-video-container').style.width = '100%';
+            document.getElementById('peer-video-container').style.display = 'none';
+            document.getElementById('peerWebcam').style.display = 'none';
+            document.getElementById('peer-placeholder').style.display = 'flex';
+
+            const peerAvatar = document.getElementById('peer-avatar');
+            if (targetKey === "guitar" || targetKey === "bass") peerAvatar.innerText = "🎸";
+            else if (targetKey === "drums") peerAvatar.innerText = "🥁";
+            else if (targetKey === "keys") peerAvatar.innerText = "🎹";
+            else if (targetKey === "violin") peerAvatar.innerText = "🎻";
+
+            document.getElementById('peer-label').innerText = cleanTargetName;
+
+            const sendSearchBroadcast = () => {
+                if (pubnub) {
+                    pubnub.publish({
+                        channel: currentLobbyChannel,
+                        message: {
+                            action: 'searching',
+                            peerId: myId,
+                            instrument: instKey,
+                            lookingFor: targetKey
+                        }
+                    });
+                }
+            };
+
+            sendSearchBroadcast();
+            if (searchInterval) clearInterval(searchInterval);
+            searchInterval = setInterval(sendSearchBroadcast, 2000);
+        }
+
+        // DISCONNECTED: Completely releases camera/microphone hardware locks when leaving
+        function leaveJam() {
+            if (searchInterval) {
+                clearInterval(searchInterval);
+                searchInterval = null;
+            }
+
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            targetPeerId = null;
+
+            // Stop and release camera tracks
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            const video = document.getElementById('webcam');
+            video.style.display = 'none';
+            
+            const camBtn = document.getElementById('camBtn');
+            camBtn.innerText = "Click to Turn Video On"; 
+            camBtn.classList.remove('active');
+
+            // Stop and release microphone tracks
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
+            }
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            for (let i = 0; i < barElements.length; i++) {
+                barElements[i].style.height = '2px';
+            }
+            
+            const micBtn = document.getElementById('micBtn');
+            micBtn.innerText = "Test Instrument Input";
+            micBtn.classList.remove('active');
+
+            document.getElementById('bw-warning-shield').style.display = 'none';
+
+            if (pubnub) {
+                pubnub.publish({
+                    channel: currentLobbyChannel,
+                    message: {
+                        action: 'disconnected',
+                        peerId: myId
+                    }
+                });
+            }
+
+            document.getElementById('jam-room-display').style.display = 'none';
+            document.getElementById('setup-inputs').style.display = 'block';
+
+            document.getElementById('local-video-container').style.width = '100%';
+            document.getElementById('peer-video-container').style.display = 'none';
+            document.getElementById('peerWebcam').style.display = 'none';
+            document.getElementById('peer-placeholder').style.display = 'flex';
+
+            const latencyFooter = document.getElementById('latency-val');
+            latencyFooter.innerText = "System Status: Ready to Jam";
+            latencyFooter.style.color = '#00e5ff';
+        }
     </script>
 </body>
 </html>
