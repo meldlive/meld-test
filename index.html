@@ -9,11 +9,11 @@
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; overflow-x: hidden; padding-bottom: 20px; }
+        body { background-color: #000000; color: #ffffff; height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow-x: hidden; }
 
         .umbrella-bar { width: 100%; background-color: #050505; border-bottom: 1px solid #111111; padding: 8px 20px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         .umbrella-link { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #555555; text-transform: uppercase; text-decoration: none; }
-        .brand-container { text-align: center; margin-top: 5px; width: 100%; }
+        .brand-container { text-align: center; margin-top: 5px; width: 100%; flex-shrink: 0; }
         .logo { font-size: 34px; font-weight: 900; letter-spacing: 8px; background: linear-gradient(180deg, #ffffff 0%, #888888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; line-height: 1.1; }
         .tagline { font-size: 9px; color: #444444; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; font-weight: 700; }
         
@@ -26,19 +26,23 @@
         .signup-text { font-size: 9px; color: #555555; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 10px; }
         .jam-btn { width: 100%; background: #000000; color: #00e5ff; border: 2px solid #00e5ff; padding: 12px; border-radius: 30px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; transition: all 0.2s ease; }
         
-        .footer-network { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 20px; }
+        .footer-network { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: auto; padding-bottom: 20px; }
         .social-row { display: flex; justify-content: center; align-items: center; gap: 16px; }
         .hex-anchor { position: relative; width: 34px; height: 19.63px; border-left: 2px solid #00e5ff; border-right: 2px solid #00e5ff; margin: 4px 0; display: flex; justify-content: center; align-items: center; text-decoration: none; color: #ffffff; }
         .hex-anchor::before, .hex-anchor::after { content: ""; position: absolute; width: 24.04px; height: 24.04px; transform: scaleY(0.5774) rotate(-45deg); background-color: transparent; left: 3.4px; }
         .hex-anchor::before { top: -12.02px; border-top: 2px solid #00e5ff; border-right: 2px solid #00e5ff; }
         .hex-anchor::after { bottom: -12.02px; border-bottom: 2px solid #00e5ff; border-left: 2px solid #00e5ff; }
         .hex-inner-symbol { font-size: 11px; }
+        .latency-footer { font-size: 8px; color: #222222; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; text-align: center; width: 100%; }
+        
+        /* App Portal Styles */
+        .camera-preview-box { width: 100%; height: 150px; background-color: #0a0a0a; border: 1px dashed #222222; border-radius: 14px; margin-bottom: 8px; display: flex; justify-content: center; align-items: center; position: relative; }
+        #webcam { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div class="umbrella-bar"><a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a></div>
-
     <div class="brand-container">
         <div class="logo">MYROC</div>
         <div class="tagline" id="brand-tagline">Beta Portal Access</div>
@@ -61,12 +65,13 @@
         </div>
     </div>
 
-    <!-- PORTAL (Your App contents would go inside here) -->
-    <div class="setup-card" id="app-portal-card" style="display: none; padding: 12px 16px;">
-        <!-- App content area -->
+    <!-- MAIN PORTAL -->
+    <div class="setup-card" id="app-portal-card" style="display: none;">
+        <div class="camera-preview-box"><video id="webcam" autoplay playsinline muted></video></div>
+        <!-- Insert your previous functional portal code here -->
     </div>
 
-    <!-- SOCIAL DOCK (Persistent) -->
+    <!-- SOCIAL DOCK -->
     <div class="footer-network">
         <div class="social-row">
             <a href="https://instagram.com/meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-instagram hex-inner-symbol"></i></a>
@@ -74,14 +79,13 @@
             <a href="https://x.com/meldlive" class="hex-anchor" target="_blank"><i class="fa-brands fa-x-twitter hex-inner-symbol"></i></a>
             <a href="mailto:meldliveapp@gmail.com" class="hex-anchor"><i class="fa-regular fa-envelope hex-inner-symbol"></i></a>
         </div>
+        <div class="latency-footer" id="latency-val">Initializing MELD Network...</div>
     </div>
 
     <script>
         function handleGateKeyPress(event) { if (event.key === "Enter") verifyBetaPassword(); }
-        
         function verifyBetaPassword() {
-            const inputVal = document.getElementById('portal-password').value.trim();
-            if (inputVal.toLowerCase() === "meldjam") {
+            if (document.getElementById('portal-password').value.trim().toLowerCase() === "meldjam") {
                 document.getElementById('password-gate-card').style.display = 'none';
                 document.getElementById('app-portal-card').style.display = 'block';
                 document.getElementById('brand-tagline').innerText = "Audio Collaboration Engine";
