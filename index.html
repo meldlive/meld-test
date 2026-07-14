@@ -162,13 +162,14 @@
 
         let videoStream = null; let audioStream = null; let audioContext = null; let analyser = null; let dataArray = null; let animationFrameId = null; let barElements = [];
         let myId = null; let peerConnection = null; let pubnub = null; let currentLobbyChannel = 'myroc-global-lobby'; let searchInterval = null; let targetPeerId = null;
+        let isMatched = false; // Added state variable to track matching
 
         function verifyBetaPassword() {
             if (document.getElementById('portal-password').value.trim().toLowerCase() === "meldjam") {
                 document.getElementById('password-gate-card').style.display = 'none';
                 document.getElementById('app-portal-card').style.display = 'block';
                 document.getElementById('brand-tagline').innerText = "Audio Collaboration Engine";
-                initializePubNub(); // Just init PubNub, don't subscribe yet
+                initializePubNub();
             } else { document.getElementById('gate-error').style.display = 'block'; document.getElementById('portal-password').value = ""; }
         }
 
@@ -181,9 +182,13 @@
                 if (msg.senderId === myId || msg.peerId === myId) return;
                 const myInstrument = document.getElementById('instrument').value;
                 const myTarget = document.getElementById('search').value;
-                if (msg.action === 'searching' && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
-                    if (myId < msg.peerId) { targetPeerId = msg.peerId; if(searchInterval) clearInterval(searchInterval); initiateWebRTCCall(targetPeerId); }
-                    else { targetPeerId = msg.peerId; if(searchInterval) clearInterval(searchInterval); document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY..."; }
+                
+                // Only process if not already matched
+                if (msg.action === 'searching' && !isMatched && msg.instrument === myTarget && msg.lookingFor === myInstrument) {
+                    isMatched = true; // Lock status
+                    if(searchInterval) clearInterval(searchInterval);
+                    if (myId < msg.peerId) { targetPeerId = msg.peerId; initiateWebRTCCall(targetPeerId); }
+                    else { targetPeerId = msg.peerId; document.getElementById('jam-status').innerText = "CONNECTING DIRECTLY..."; }
                 }
                 else if (msg.action === 'sdp-offer' && msg.targetId === myId) handleSDPOffer(msg);
                 else if (msg.action === 'sdp-answer' && msg.targetId === myId) handleSDPAnswer(msg);
@@ -197,16 +202,18 @@
             document.getElementById('setup-inputs').style.display = 'none';
             document.getElementById('jam-room-display').style.display = 'flex';
             
-            // Now we subscribe and start searching
             pubnub.subscribe({ channels: [currentLobbyChannel] });
             searchInterval = setInterval(() => {
-                pubnub.publish({ channel: currentLobbyChannel, message: { action: 'searching', peerId: myId, instrument: document.getElementById('instrument').value, lookingFor: document.getElementById('search').value } });
+                if(!isMatched) { // Only broadcast if not matched
+                    pubnub.publish({ channel: currentLobbyChannel, message: { action: 'searching', peerId: myId, instrument: document.getElementById('instrument').value, lookingFor: document.getElementById('search').value } });
+                }
             }, 2000);
         }
 
         function leaveJam() {
+            isMatched = false; // Reset state
             if(searchInterval) clearInterval(searchInterval);
-            pubnub.unsubscribe({ channels: [currentLobbyChannel] }); // Stop listening
+            pubnub.unsubscribe({ channels: [currentLobbyChannel] });
             if(peerConnection) { peerConnection.close(); peerConnection = null; }
             if(videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
             if(audioStream) { audioStream.getTracks().forEach(t => t.stop()); audioStream = null; }
