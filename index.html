@@ -6,7 +6,6 @@
     <title>MYROC | Powered by MELD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Secure PubNub for private matchmaking & handshaking -->
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
     
     <style>
@@ -170,7 +169,7 @@
             z-index: 1;
         }
 
-        /* NEW: LOW BANDWIDTH OVERLAY SHIELD */
+        /* LOW BANDWIDTH OVERLAY SHIELD */
         .bandwidth-shield {
             display: none;
             position: absolute;
@@ -417,9 +416,7 @@
         }
     </style>
 </head>
-<body>
-
-    <div class="umbrella-bar">
+<body oncontextmenu="return false;"> <div class="umbrella-bar">
         <a href="https://meldliveapp.com" class="umbrella-link" target="_blank">Powered by MELD</a>
     </div>
 
@@ -428,7 +425,6 @@
         <div class="tagline" id="brand-tagline">Beta Portal Access</div>
     </div>
 
-    <!-- 1. THE PASSWORD GATE CARD -->
     <div class="setup-card" id="password-gate-card">
         <h3 class="gate-title">Enter Access Key</h3>
         <input type="password" class="gate-input" id="portal-password" placeholder="••••••••" onkeydown="handleGateKeyPress(event)">
@@ -436,11 +432,9 @@
         <button class="jam-btn" onclick="verifyBetaPassword()">Unlock Portal</button>
     </div>
 
-    <!-- 2. THE SYSTEM APPARATUS CARD -->
     <div class="setup-card" id="app-portal-card" style="display: none; padding: 12px 16px;">
         
         <div class="camera-preview-box">
-            <!-- Dynamic Low Bandwidth Shield Overlay -->
             <div class="bandwidth-shield" id="bw-warning-shield">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <h4>Bandwidth Warning</h4>
@@ -528,12 +522,23 @@
     </div>
 
     <script>
+        // OBFUSCATION SHIELD: Prevent inspection tools / keybind copy shortcuts
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || 
+               (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
+               (e.ctrlKey && e.shiftKey && e.keyCode == 74) || 
+               (e.metaKey && e.altKey && e.keyCode == 73)) {
+                return false;
+            }
+        };
+
         window.onerror = function(message, source, lineno, colno, error) {
             const footer = document.getElementById('latency-val');
             if (footer) { footer.innerText = "Error: " + message + " (Line " + lineno + ")"; footer.style.color = '#ff3b30'; }
             return false;
         };
 
+        // ENFORCED HARD PASS: Require key Entry on fresh reload, do not cache persistently
         const BETA_ACCESS_KEY = "meldjam"; 
 
         function handleGateKeyPress(event) {
@@ -547,7 +552,6 @@
             const errorMsg = document.getElementById('gate-error');
             
             if (inputVal.toLowerCase() === BETA_ACCESS_KEY.toLowerCase()) {
-                sessionStorage.setItem('myroc_unlocked', 'true');
                 revealMainPortal();
             } else {
                 errorMsg.style.display = 'block';
@@ -561,12 +565,6 @@
             document.getElementById('brand-tagline').innerText = "Audio Collaboration Engine";
             initializeEngineAndConnection();
         }
-
-        window.addEventListener('load', () => {
-            if (sessionStorage.getItem('myroc_unlocked') === 'true') {
-                revealMainPortal();
-            }
-        });
 
         let videoStream = null; let audioStream = null; let audioContext = null; let analyser = null; let dataArray = null; let animationFrameId = null; let barElements = [];
         let myId = null; let peerConnection = null; let pubnub = null; let currentLobbyChannel = 'myroc-global-lobby'; let searchInterval = null; let targetPeerId = null;
@@ -674,7 +672,6 @@
                     } else if (state === 'connected') {
                         footer.innerText = "P2P Connection: Active (12ms Latency)";
                         footer.style.color = '#00e5ff';
-                        // Trigger dynamic bandwidth monitor once connection is established
                         monitorConnectionBandwidth();
                     } else if (state === 'failed' || state === 'disconnected') {
                         footer.innerText = "Network Bridge Blocked. Retrying stream...";
@@ -709,7 +706,7 @@
             };
         }
 
-        // NEW: Real-Time WebRTC Bandwidth and Latency Monitor
+        // REAL-TIME AUDIO-FIRST BANDWIDTH AND PACKET LOSS MONITOR
         function monitorConnectionBandwidth() {
             if (!peerConnection) return;
 
@@ -725,48 +722,63 @@
                     let roundTripTime = 0;
 
                     stats.forEach(report => {
-                        // Check packet loss on incoming video tracks
                         if (report.type === 'inbound-rtp' && report.kind === 'video') {
                             packetLoss = report.packetsLost || 0;
                         }
-                        // Check exact millisecond round trip latency (RTT)
                         if (report.type === 'candidate-pair' && report.state === 'succeeded') {
-                            roundTripTime = (report.currentRoundTripTime || 0) * 1000; // convert to ms
+                            roundTripTime = (report.currentRoundTripTime || 0) * 1000;
                         }
                     });
 
-                    // CRITERIA FOR LAG PROTECTION:
-                    // If round trip latency is greater than 250ms OR packet loss is climbing rapidly
-                    if (roundTripTime > 250 || packetLoss > 15) {
+                    // Dynamic Shield Trigger: Latency over 200ms or loss triggers Audio Priority Shield
+                    if (roundTripTime > 200 || packetLoss > 10) {
                         triggerLowBandwidthMode();
                         clearInterval(intervalId);
                     }
                 } catch (err) {
-                    console.warn("Bandwidth statistics check bypassed.", err);
+                    console.warn("Stats read bypass:", err);
                 }
-            }, 2000); // Poll connection quality every 2 seconds
+            }, 1500); 
         }
 
-        // NEW: Shuts off outgoing video and displays warning shield
+        // DISRUPT VIDEO CHANNELS & ALLOCATE ALL NETWORK PIPES TO OPUS AUDIO STREAM
         function triggerLowBandwidthMode() {
-            const warningShield = document.getElementById('bw-warning-shield');
-            const latencyFooter = document.getElementById('latency-val');
+            document.getElementById('bw-warning-shield').style.display = 'flex';
 
-            // 1. Instantly display warning card over video preview box
-            warningShield.style.display = 'flex';
-
-            // 2. Shut off local camera feed outgoing transmission to clear all bandwidth for audio
             if (videoStream) {
                 videoStream.getVideoTracks().forEach(track => {
-                    track.enabled = false; // Stops encoding and transmitting video data
+                    track.enabled = false; // Stops raw frame processing instantly to free cellular CPU
                 });
             }
 
-            // 3. Update Status footer to reflect changes
+            const latencyFooter = document.getElementById('latency-val');
             if (latencyFooter) {
-                latencyFooter.innerText = "Audio Locked (Video Muted for Low Bandwidth)";
+                latencyFooter.innerText = "Audio Locked (Video Offline for Low Bandwidth)";
                 latencyFooter.style.color = '#ffaa00';
             }
+        }
+
+        // HARD SDP PARSER: Injection of Opus Codec overrides to command immediate high performance priorities 
+        function optimizeSDPForAudio(sdp) {
+            let lines = sdp.split('\r\n');
+            let mAudioIndex = -1;
+
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf('m=audio') === 0) {
+                    mAudioIndex = i;
+                    break;
+                }
+            }
+
+            if (mAudioIndex !== -1) {
+                // Force Opus codecs parameters: dynamic bitrate scaling, DTX silence packet skipping, FEC Recovery
+                for (let i = mAudioIndex; i < lines.length; i++) {
+                    if (lines[i].indexOf('a=fmtp:') === 0 && lines[i].indexOf('opus') !== -1) {
+                        lines[i] = lines[i] + ';maxaveragebitrate=128000;useinbandfec=1;usedtx=1;stereo=1';
+                    }
+                }
+            }
+            return lines.join('\r\n');
         }
 
         async function initiateWebRTCCall(targetId) {
@@ -774,10 +786,13 @@
             createPeerConnection();
 
             try {
-                const offer = await peerConnection.createOffer({
+                let offer = await peerConnection.createOffer({
                     offerToReceiveAudio: 1,
                     offerToReceiveVideo: 1
                 });
+                
+                // Audio Priority optimization injected straight into Local SDP parameters
+                offer.sdp = optimizeSDPForAudio(offer.sdp);
                 await peerConnection.setLocalDescription(offer);
 
                 const myInstrument = document.getElementById('instrument').value;
@@ -794,7 +809,7 @@
                     });
                 }
             } catch (err) {
-                console.error("Offer framework mapping error: ", err);
+                console.error("Offer setup error: ", err);
             }
         }
 
@@ -804,7 +819,10 @@
 
             try {
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.offer));
-                const answer = await peerConnection.createAnswer();
+                let answer = await peerConnection.createAnswer();
+                
+                // Answer SDP Audio injection optimization
+                answer.sdp = optimizeSDPForAudio(answer.sdp);
                 await peerConnection.setLocalDescription(answer);
 
                 if (pubnub) {
@@ -819,7 +837,7 @@
                     });
                 }
             } catch (err) {
-                console.error("Remote target processing execution error: ", err);
+                console.error("Offer processing failure: ", err);
             }
         }
 
@@ -829,7 +847,7 @@
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.answer));
                 }
             } catch (err) {
-                console.error("Answer evaluation processing failure: ", err);
+                console.error("Answer negotiation failure: ", err);
             }
         }
 
@@ -838,7 +856,7 @@
                 try {
                     await peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate));
                 } catch (err) {
-                    console.error("ICE candidate append routing failure: ", err);
+                    console.error("ICE injection failure: ", err);
                 }
             }
         }
@@ -861,12 +879,22 @@
             document.getElementById('peer-placeholder').style.display = 'none';
         }
 
+        // AUDIO ENGINES: Restored clean constraints optimized for line-in inputs
         async function startAudio() {
             if (!audioStream) {
                 const micBtn = document.getElementById('micBtn');
                 barElements = document.querySelectorAll('.eq-bar');
                 try {
-                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    audioStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: false,
+                            noiseSuppression: false,
+                            autoGainControl: false,
+                            latency: 0.005,
+                            channelCount: 2
+                        }, 
+                        video: false 
+                    });
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaStreamSource(audioStream);
                     analyser = audioContext.createAnalyser();
@@ -878,7 +906,7 @@
                     micBtn.classList.add('active');
                     updateVisualizer();
                 } catch (err) {
-                    console.warn("Hardware audio input bypassed.", err);
+                    console.warn("Microphone feed failed.", err);
                 }
             }
         }
@@ -888,13 +916,19 @@
                 const btn = document.getElementById('camBtn');
                 const video = document.getElementById('webcam');
                 try {
-                    videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    videoStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: {
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            frameRate: { ideal: 24 }
+                        } 
+                    });
                     video.srcObject = videoStream;
                     video.style.display = 'block';
                     btn.innerText = "Turn Video Off"; 
                     btn.classList.add('active');
                 } catch (err) {
-                    console.warn("Hardware layout vision stream bypassed.", err);
+                    console.warn("Video camera failed.", err);
                 }
             }
         }
@@ -992,7 +1026,7 @@
             searchInterval = setInterval(sendSearchBroadcast, 2000);
         }
 
-        // DISCONNECT AND COMPLETE DEVICE FEED RESET
+        // SYSTEM TEARDOWN: Completely disconnect peer session and hard release hardware locks
         function leaveJam() {
             if (searchInterval) {
                 clearInterval(searchInterval);
@@ -1005,7 +1039,7 @@
             }
             targetPeerId = null;
 
-            // FIX: Completely stop and release local camera feed
+            // Stop and release camera track feeds on disconnection
             if (videoStream) {
                 videoStream.getTracks().forEach(track => track.stop());
                 videoStream = null;
@@ -1017,7 +1051,7 @@
             camBtn.innerText = "Click to Turn Video On"; 
             camBtn.classList.remove('active');
 
-            // FIX: Completely stop and release local mic feed
+            // Stop and release microphone track feeds on disconnection
             if (audioStream) {
                 audioStream.getTracks().forEach(track => track.stop());
                 audioStream = null;
@@ -1031,7 +1065,6 @@
             micBtn.innerText = "Test Instrument Input";
             micBtn.classList.remove('active');
 
-            // Hide warning shield overlay
             document.getElementById('bw-warning-shield').style.display = 'none';
 
             if (pubnub) {
